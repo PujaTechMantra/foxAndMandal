@@ -28,7 +28,7 @@ class OfficeController extends Controller
      */
     public function index(): View
     {
-        $data = Office::latest()->paginate(5);
+        $data = Office::latest()->paginate(25);
         return view('facility.office.index',compact('data'))
             ->with('i', (request()->input('page', 1) - 1) * 5);
     }
@@ -92,15 +92,16 @@ class OfficeController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Office $product): RedirectResponse
+    public function update(Request $request, $id): RedirectResponse
     {
          request()->validate([
             'name' => 'required',
-            'detail' => 'required',
         ]);
     
-        $product->update($request->all());
-    
+        $data = Office::findOrfail($id);
+        $data->name=$request->name;
+        $data->address=$request->address;
+        $data->save();
         return redirect()->route('offices.index')
                         ->with('success','Office updated successfully');
     }
@@ -111,9 +112,10 @@ class OfficeController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product): RedirectResponse
+    public function destroy($id): RedirectResponse
     {
-        $product->delete();
+        $data = Office::findOrfail($id);
+        $data->delete();
     
         return redirect()->route('offices.index')
                         ->with('success','Office deleted successfully');

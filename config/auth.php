@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        
+         'front_user' => [
+            'driver' => 'database',
+            'table' => 'users',
+        ],
     ],
 
     /*
@@ -65,10 +70,10 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'front_user' => [
+            'driver' => 'database',
+            'table' => 'front',
+        ],
     ],
 
     /*
@@ -109,7 +114,7 @@ return [
     | confirmation screen. By default, the timeout lasts for three hours.
     |
     */
-
+    'redirect' => '/login', 
     'password_timeout' => 10800,
 
 ];

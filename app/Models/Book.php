@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use DB;
 class Book extends Model
 {
     use HasFactory;
@@ -39,4 +39,40 @@ class Book extends Model
      {
          return $this->belongsTo(BookCategory::class);
      }
+     
+     
+     public function issueBooks()
+    {
+        return $this->hasMany(IssueBook::class, 'book_id', 'id');
+    }
+    
+    
+     public static function insertData($data, $successCount) {
+        $id='';
+        $value = DB::table('books')->where('title', $data['title'])->where('bookshelves_id',$data['bookshelves_id'])->where('category_id',$data['category_id'])->where('edition',$data['edition'])->where('year',$data['year'])->where('book_no',$data['book_no'])->get();
+        if($value->count() == 0) {
+            $id = DB::table('books')->insertGetId($data);
+           
+           //DB::table('users')->insert($data);
+            $successCount++;
+        $resp = [
+            "successCount" => $successCount,
+            "id" => $id,
+        ];
+        
+         return $resp;
+         } else {
+             $resp = [
+             "successCount" => 0,
+             "id" => $value[0]->id,
+             ];
+            
+             return $resp;
+         }
+
+        // return $count;
+
+       
+        
+    }
 }

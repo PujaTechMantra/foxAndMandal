@@ -23,6 +23,10 @@ class User extends Authenticatable
         'mobile',
         'otp',
         'password',
+        'designation',
+        'type',
+        'image',
+        'qrcode'
     ];
 
     /**

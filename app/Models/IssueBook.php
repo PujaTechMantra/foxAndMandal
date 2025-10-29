@@ -22,7 +22,8 @@ class IssueBook extends Model
         'transfer_approve_date',
         'book_holder_user_id',
         'is_return',
-        'return_date'
+        'return_date',
+        'issue_type'
     ];
     
     
@@ -31,7 +32,17 @@ class IssueBook extends Model
          return $this->belongsTo(User::class);
     }
     
+    public function bookmark()
+    {
+         return $this->belongsTo(Bookmark::class);
+    }
     
+     public function user2()
+    {
+         return $this->belongsTo(User::class,'user_id2');
+    }
+    
+   
     public function book()
     {
          return $this->belongsTo(Book::class);

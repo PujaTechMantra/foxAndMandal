@@ -8,6 +8,7 @@ use App\Models\Office;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Session;
 use Auth;
 class BookshelveController extends Controller
 {
@@ -225,7 +226,7 @@ class BookshelveController extends Controller
             fpassthru($f);
         }
 	}
-	
+   
 	//csv upload
 	
 	public function csvImport(Request $request)
@@ -271,8 +272,8 @@ class BookshelveController extends Controller
                      foreach ($importData_arr as $importData) {
                         $count = $total = 0;
                         $officeData = '';
-                        foreach (explode(',', $importData[0]) as $cateKey => $catVal) {
-                            $catExistCheck = Office::where('name', $catVal)->where('address',$importData[1])->first();
+                        //foreach ($importData[0] as $cateKey => $catVal) {
+                            $catExistCheck = Office::where('name', $importData[0])->where('address',$importData[1])->first();
                             if ($catExistCheck) {
                                 $insertDirCatId = $catExistCheck->id;
                                 $officeData = $insertDirCatId;
@@ -285,27 +286,20 @@ class BookshelveController extends Controller
 
                                 $officeData = $insertDirCatId;
                             }
-                        }
-                         function generateUniqueAlphaNumeric($length = 10) {
-                            $random_string = '';
-                            for ($i = 0; $i < $length; $i++) {
-                                $number = random_int(0, 36);
-                                $character = base_convert($number, 10, 36);
-                                $random_string .= $character;
-                            }
-                            return $random_string;
-                        }
+                        //}
+                          
                          $insertData = array(
                              "office_id" => $officeData? $officeData : null,
                              "user_id" => Auth::user()->id,
-                             "number" => isset($importData[1]) ? $importData[1] : null,
-                             "area" => isset($importData[2]) ? $importData[2] : null,
-                             "manager" => isset($importData[3]) ? $importData[3] : null,
-                             "qrcode" => strtoupper(generateUniqueAlphaNumeric(10))
+                             "number" => isset($importData[2]) ? $importData[2] : null,
+                             //"area" => isset($importData[2]) ? $importData[2] : null,
+                             //"manager" => isset($importData[3]) ? $importData[3] : null,
+                             "qrcode" => strtoupper(generateUniqueAlphaNumericValue(10)),
                          );
+                         $resp = Bookshelve::insertData($insertData, $successCount);
                         }						
                               
-                    
+                      
                    
                         
                      Session::flash('message', 'CSV Import Complete. Total no of entries: ' . count($importData_arr));

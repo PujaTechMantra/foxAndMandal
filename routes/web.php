@@ -18,6 +18,7 @@ use App\Http\Controllers\Cave\CaveFormController;
 use App\Http\Controllers\Cave\CaveLocationController;
 use App\Http\Controllers\Cave\CaveCategoryController;
 use App\Http\Controllers\Front\Auth\FrontAuthController;
+Use App\Http\Controllers\Front\FlightController;
 use Illuminate\Support\Facades\Route;
 Route::get('/cache-clear', function() {
 	// \Artisan::call('route:cache');
@@ -215,13 +216,23 @@ Route::group(['middleware' => ['auth']], function() {
 });
 
 // ---------------- FRONT USER LOGIN (OTP) ----------------
-Route::prefix('front')->group(function () {
-    Route::get('/login', [FrontAuthController::class, 'showLoginForm'])->name('front.login');
-    Route::post('/send-otp', [FrontAuthController::class, 'sendOtp'])->name('front.send.otp');
-    Route::post('/verify-otp', [FrontAuthController::class, 'verifyOtp'])->name('front.verify.otp');
-    Route::post('/logout', [FrontAuthController::class, 'logout'])->name('front.logout');
+Route::prefix('front')->name('front.')->group(function () {
+    Route::get('/login', [FrontAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/send-otp', [FrontAuthController::class, 'sendOtp'])->name('send.otp');
+    Route::post('/verify-otp', [FrontAuthController::class, 'verifyOtp'])->name('verify.otp');
+    Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('auth.front_user')->group(function () {
-        Route::get('/dashboard', [FrontAuthController::class, 'dashboard'])->name('front.dashboard');
+        Route::get('/dashboard', [FrontAuthController::class, 'dashboard'])->name('dashboard');
+        Route::get('/travel/dashboard', [FrontAuthController::class, 'travel'])->name('travel.dashboard');
+        Route::get('/library/dashboard', [FrontAuthController::class, 'library'])->name('library.dashboard');
+        Route::get('/cavity/dashboard', [FrontAuthController::class, 'cavity'])->name('cavity.dashboard');
+        
+        Route::get('/travel/flight', [FlightController::class, 'index'])->name('travel.flight.index');
+        Route::post('/travel/flight/store', [FlightController::class, 'store'])->name('travel.flight.store');
+    
+       // Route::get('/erp/dashboard', [FrontAuthController::class, 'erp'])->name('erp.dashboard');
+        // Route::get('/ildms/dashboard', [FrontAuthController::class, 'ildms'])->name('ildms.dashboard');
+
     });
 });

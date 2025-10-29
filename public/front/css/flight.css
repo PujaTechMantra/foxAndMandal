@@ -1,0 +1,185 @@
+/* ====== Layout ====== */
+.booking-wrapper {
+    max-width: 950px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+}
+
+/* ====== Header Buttons ====== */
+.back-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f5d2a8, #d6a56d);
+    color: #4b1d0d;
+    font-size: 1.3rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.back-btn:hover {
+    background: linear-gradient(135deg, #d6a56d, #b6783c);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.refresh-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4b1d0d, #2c0e06);
+    color: #f5d2a8;
+    border: none;
+    font-size: 1.3rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+.refresh-btn:hover {
+    background: linear-gradient(135deg, #d6a56d, #b6783c);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* ====== Form ====== */
+.form-label {
+    font-weight: 600;
+    color: #4b1d0d;
+}
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #c49a6c;
+    background: #fff;
+    font-size: 0.95rem;
+    padding: 10px 14px;
+}
+.form-control:focus {
+    border-color: #d6a56d;
+    box-shadow: 0 0 0 0.15rem rgba(214,165,109,0.25);
+}
+
+/* ====== Trip Buttons ====== */
+.trip-type {
+    background: #f6ece1;
+    border: 1px solid #d6a56d;
+    border-radius: 50px;
+}
+.trip-btn {
+    padding: 10px 30px;
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    color: #4b1d0d;
+    transition: 0.3s;
+}
+.trip-btn.active {
+    background: #4b1d0d;
+    color: #f5d2a8;
+}
+.trip-btn:hover {
+    background: #d6a56d;
+    color: #fff;
+}
+
+/* ====== Radio Group ====== */
+.radio-group label {
+    display: block;
+    color: #4b1d0d;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.radio-group input[type="radio"] {
+    accent-color: #4b1d0d; /* Gold-brown accent for radio buttons */
+    margin-right: 10px;
+    transform: scale(1.1);
+}
+.radio-group.horizontal label {
+    display: inline-block;
+    margin-right: 25px;
+}
+.radio-group span {
+    color: #777;
+    font-size: 0.85rem;
+}
+
+/* ====== Buttons ====== */
+.btn-gold {
+    background: linear-gradient(135deg, #f5d2a8, #d6a56d);
+    color: #4b1d0d;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 12px;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.btn-gold:hover {
+    background: linear-gradient(135deg, #d6a56d, #b6783c);
+    color: #fff;
+    transform: translateY(-2px);
+}
+.modal-header {
+        background-color: #d6ad60;
+        color: white;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+    }
+
+    .form-select, .form-control {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    .modal-footer .btn {
+        min-width: 100px;
+    }
+
+    .person-card {
+    background: #fff9f3;
+    border: 1px solid #e2c6a1;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.person-card h6 {
+    color: #4b1d0d;
+    font-weight: 600;
+}
+.person-card p {
+    font-size: 0.9rem;
+    color: #6c5a43;
+}
+.delete-btn {
+    border: none;
+    color: #b94a48;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+.delete-btn:hover {
+    background: #b94a48;
+    color: #fff;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 992px) {
+    .booking-wrapper {
+        padding: 25px 20px;
+    }
+    .btn-gold, .trip-btn {
+        width: 100%;
+    }
+    .text-center .btn-gold.w-50 {
+        width: 100% !important;
+    }
+    .refresh-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+}

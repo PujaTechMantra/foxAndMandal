@@ -82,4 +82,14 @@ class FrontAuthController extends Controller
     {
         return view('front.dashboard');
     }
+
+    public function travel()
+    {
+        return view('front.travel.dashboard');
+    }
+    public function library()
+    {
+        return view('front.library.dashboard');
+    }
+
 }

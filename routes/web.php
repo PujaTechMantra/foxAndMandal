@@ -17,6 +17,7 @@ use App\Http\Controllers\Facility\MatterCodeController;
 use App\Http\Controllers\Cave\CaveFormController;
 use App\Http\Controllers\Cave\CaveLocationController;
 use App\Http\Controllers\Cave\CaveCategoryController;
+use App\Http\Controllers\Front\Auth\FrontAuthController;
 use Illuminate\Support\Facades\Route;
 Route::get('/cache-clear', function() {
 	// \Artisan::call('route:cache');
@@ -211,5 +212,16 @@ Route::group(['middleware' => ['auth']], function() {
      //station list upload
      Route::post('stationlist/upload/', [TrainBookingController::class, 'upload'])->name('stationlist.upload');
      
-     
+});
+
+// ---------------- FRONT USER LOGIN (OTP) ----------------
+Route::prefix('front')->group(function () {
+    Route::get('/login', [FrontAuthController::class, 'showLoginForm'])->name('front.login');
+    Route::post('/send-otp', [FrontAuthController::class, 'sendOtp'])->name('front.send.otp');
+    Route::post('/verify-otp', [FrontAuthController::class, 'verifyOtp'])->name('front.verify.otp');
+    Route::post('/logout', [FrontAuthController::class, 'logout'])->name('front.logout');
+
+    Route::middleware('auth.front_user')->group(function () {
+        Route::get('/dashboard', [FrontAuthController::class, 'dashboard'])->name('front.dashboard');
+    });
 });

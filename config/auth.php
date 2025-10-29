@@ -42,8 +42,8 @@ return [
         ],
         
          'front_user' => [
-            'driver' => 'database',
-            'table' => 'users',
+            'driver' => 'session',
+            'provider' => 'users',
         ],
     ],
 
@@ -68,11 +68,6 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
-        ],
-
-        'front_user' => [
-            'driver' => 'database',
-            'table' => 'front',
         ],
     ],
 

@@ -3,80 +3,114 @@
 @section('title', 'Flight Booking')
 
 @section('content')
-
-
 <div class="container py-5">
-    <!-- Header -->
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <div class="d-flex align-items-center">
-            <a href="{{ route('front.travel.dashboard') }}" 
-               class="back-btn d-flex align-items-center justify-content-center me-3 text-decoration-none">
-                <i class="bi bi-arrow-left"></i>
-            </a>
-            <h3 class="mb-0 fw-semibold text-dark">Flight Booking</h3>
-        </div>
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap">
+            <div class="d-flex align-items-center">
+                <a href="{{ route('front.travel.dashboard') }}" 
+                class="back-btn d-flex align-items-center justify-content-center me-3 text-decoration-none">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h3 class="mb-0 fw-semibold text-dark">Flight Booking</h3>
+            </div>
 
-        <button class="refresh-btn d-flex align-items-center justify-content-center" type="button">
-            <i class="bi bi-arrow-clockwise"></i>
-        </button>
-    </div>
+            <div class="mt-3 mt-md-0">
+                <a href="{{ route('front.travel.flight.history')}}" 
+                class="btn btn-gold btn-sm d-flex align-items-center">
+                    <i class="bi bi-clock-history me-2"></i>
+                    <span>Booking History</span>
+                </a>
+            </div>
+        </div>
 
     <!-- Booking Form -->
     <div class="booking-wrapper mx-auto p-5">
-        <form class="booking-form" id="flightBookingForm">
-              @csrf
+        <form class="booking-form" id="flightBookingForm" 
+              method="POST" 
+              action="{{ route('front.travel.flight.store') }}">
+            @csrf
+
+            <input type="hidden" name="user_id" value="{{ Auth::guard('front_user')->id() }}">
+            <input type="hidden" name="trip_type" id="tripTypeInput" value="{{ old('trip_type', 1) }}">
+            <input type="hidden" name="traveller_data" id="travellerDataInput">
+
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">From</label>
-                    <input type="text" name="from" class="form-control" placeholder="Enter source">
+                    <input type="text" name="from" class="form-control" 
+                           value="{{ old('from') }}" placeholder="Enter source">
                 </div>
 
                 <div class="col-md-6 mb-4">
                     <label class="form-label">To</label>
-                    <input type="text" name="to" class="form-control" placeholder="Enter destination">
+                    <input type="text" name="to" class="form-control"
+                           value="{{ old('to') }}" placeholder="Enter destination">
                 </div>
             </div>
 
             <div class="text-center mb-4">
                 <div class="trip-type d-inline-flex overflow-hidden">
-                    <button type="button" class="trip-btn active" id="oneWayBtn">One Way</button>
-                    <button type="button" class="trip-btn" id="roundTripBtn">Round Trip</button>
+                    <button type="button" class="trip-btn {{ old('trip_type', 1) == 1 ? 'active' : '' }}" id="oneWayBtn">One Way</button>
+                    <button type="button" class="trip-btn {{ old('trip_type', 1) == 2 ? 'active' : '' }}" id="roundTripBtn">Round Trip</button>
                 </div>
             </div>
+            @php
+                $today = now()->format('Y-m-d'); 
+            @endphp
 
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Departure Date</label>
-                    <input type="date" class="form-control" name="departure_date">
+                    <input 
+                        type="date" 
+                        class="form-control" 
+                        name="departure_date"
+                        value="{{ old('departure_date', $today) }}" 
+                        id="departure_date"
+                        min="{{ $today }}"
+                    >
                 </div>
 
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Departure Time</label>
                     <div class="radio-group">
-                        <label><input type="radio" name="departure-time" value="12 am - 8 am"> Early Morning <span>12 am - 8 am</span></label>
-                        <label><input type="radio" name="departure-time" value="8 am - 12 pm"> Morning <span>8 am - 12 pm</span></label>
-                        <label><input type="radio" name="departure-time" value="12 pm - 4 pm"> Mid-day <span>12 pm - 4 pm</span></label>
-                        <label><input type="radio" name="departure-time" value="4 pm - 8 pm"> Evening <span>4 pm - 8 pm</span></label>
-                        <label><input type="radio" name="departure-time" value="8 pm - 12 am"> Night <span>8 pm - 12 am</span></label>
+                        @php
+                            $times = [
+                                '12 am - 8 am' => 'Early Morning',
+                                '8 am - 12 pm' => 'Morning',
+                                '12 pm - 4 pm' => 'Mid-day',
+                                '4 pm - 8 pm' => 'Evening',
+                                '8 pm - 12 am' => 'Night',
+                            ];
+                        @endphp
+                        @foreach($times as $value => $label)
+                            <label>
+                                <input type="radio" name="departure-time" value="{{ $value }}"
+                                    {{ old('departure-time') == $value ? 'checked' : '' }}>
+                                {{ $label }} <span>{{ $value }}</span>
+                            </label>
+                        @endforeach
                     </div>
                 </div>
             </div>
 
             <!-- Return section -->
-            <div class="row" id="return-div" style="display: none;">
+            <div class="row" id="return-div" style="display: {{ old('trip_type', 1) == 2 ? 'block' : 'none' }};">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Return Date</label>
-                    <input type="date" class="form-control" name="return_date">
+                    <input type="date" class="form-control" name="return_date" value="{{ old('departure_date', $today) }}" min="{{ $today }}">
                 </div>
 
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Return Time</label>
                     <div class="radio-group">
-                        <label><input type="radio" name="return-time" value="12 am - 8 am"> Early Morning <span>12 am - 8 am</span></label>
-                        <label><input type="radio" name="return-time" value="18 am - 12 pm"> Morning <span>8 am - 12 pm</span></label>
-                        <label><input type="radio" name="return-time" value="12 pm - 4 pm"> Mid-day <span>12 pm - 4 pm</span></label>
-                        <label><input type="radio" name="return-time" value="4 pm - 8 pm"> Evening <span>4 pm - 8 pm</span></label>
-                        <label><input type="radio" name="return-time" value="8 pm - 12 am"> Night <span>8 pm - 12 am</span></label>
+                        @foreach($times as $value => $label)
+                            <label>
+                                <input type="radio" name="return-time" value="{{ $value }}"
+                                    {{ old('return-time') == $value ? 'checked' : '' }}>
+                                {{ $label }} <span>{{ $value }}</span>
+                            </label>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -96,32 +130,32 @@
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Purpose</label>
-                    <textarea class="form-control" rows="2" name="purpose" placeholder="Please specify the purpose of booking."></textarea>
+                    <textarea class="form-control" rows="2" name="purpose" placeholder="Please specify the purpose of booking.">{{ old('purpose') }}</textarea>
                 </div>
 
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Description</label>
-                    <textarea class="form-control" name="description" rows="2" placeholder="Enter flight details or preferences."></textarea>
+                    <textarea class="form-control" name="description" rows="2" placeholder="Please enter flight details/other preference if any.">{{ old('description') }}</textarea>
                 </div>
             </div>
 
             <div class="mb-4">
                 <label class="form-label">Bill To</label>
                 <div class="radio-group horizontal">
-                    <label><input type="radio" name="bill" value="1"> Firm</label>
-                    <label><input type="radio" name="bill" value="2"> Matter</label>
-                    <label><input type="radio" name="bill" value="3"> Third Party</label>
+                    <label><input type="radio" name="bill" checked value="1" {{ old('bill') == 1 ? 'checked' : '' }}> Firm</label>
+                    <label><input type="radio" name="bill" value="2" {{ old('bill') == 2 ? 'checked' : '' }}> Matter</label>
+                    <label><input type="radio" name="bill" value="3" {{ old('bill') == 3 ? 'checked' : '' }}> Third Party</label>
                 </div>
             </div>
 
-            <div class="mb-5" id="remarks-div">
+            <div class="mb-5" id="remarks-div" style="display: {{ old('bill') == 2 ? 'none' : 'block' }};">
                 <label class="form-label">Remarks</label>
-                <textarea class="form-control" name="remarks" rows="2" placeholder="Please give your remark"></textarea>
+                <textarea class="form-control" name="remarks" rows="2" placeholder="Please give your remark.">{{ old('remarks') }}</textarea>
             </div>
 
-            <div class="mb-5" id="matter-div" style="display:none;">
+            <div class="mb-5" id="matter-div" style="display: {{ old('bill') == 2 ? 'block' : 'none' }};">
                 <label class="form-label">Enter Matter Code</label>
-                <input class="form-control" name="matter_code" type="text" placeholder="Type at least 3 characters to search..">
+                <input class="form-control" name="matter_code" type="text" value="{{ old('matter_code') }}" placeholder="Type at least 3 characters to search..">
             </div>
 
             <div class="text-center">
@@ -136,49 +170,52 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addPersonModalLabel">Add Person Name</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <h5 class="modal-title">Add Person Name</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <form id="personForm">
-          <div class="row mb-3">
-            <div class="col-md-4">
-              <label class="form-label">Title</label>
-              <select class="form-select" name="title">
-                <option>Mr.</option>
-                <option>Mrs.</option>
-                <option>Miss</option>
-                <option>Ms.</option>
-                <option>Dr.</option>
-                <option>Mx.</option>
-              </select>
+        <form id="personForm" novalidate>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                <label class="form-label">Title</label>
+                <select class="form-select" name="title">
+                    <option>Mr.</option>
+                    <option>Mrs.</option>
+                    <option>Miss</option>
+                    <option>Ms.</option>
+                    <option>Dr.</option>
+                </select>
+                </div>
+                <div class="col-md-8">
+                <label class="form-label">Name</label>
+                <input type="text" class="form-control" name="name" value="{{ Auth::guard('front_user')->user()->name ?? 'Guest' }}" placeholder="Enter name of person.">
+                <div class="invalid-feedback">Please enter name.</div>
+                </div>
             </div>
-            <div class="col-md-8">
-              <label class="form-label">Name</label>
-              <input type="text" class="form-control" name="name" value="{{ Auth::guard('front_user')->user()->name ?? 'Guest' }}" placeholder="Enter full name">
+
+            <div class="mb-3">
+                <label class="form-label">Seat Preference</label>
+                <select class="form-select" name="seatPref">
+                <option value="">Select</option>
+                <option value="Window">Window</option>
+                <option value="Aisle">Aisle</option>
+                <option value="Emergency Exit">Emergency Exit</option>
+                </select>
+                <div class="invalid-feedback">Please choose seat preference.</div>
             </div>
-          </div>
 
-          <div class="mb-3">
-            <label class="form-label">Seat Preference</label>
-            <select class="form-select" ame="seatPref">
-              <option>Select</option>
-              <option>Window</option>
-              <option>Aisle</option>
-              <option>Emergency Exit</option>
-            </select>
-          </div>
+            <div class="mb-3">
+                <label class="form-label">Food Preference</label>
+                <select class="form-select" name="foodPref">
+                <option value="">Select</option>
+                <option value="Veg">Veg</option>
+                <option value="Non-Veg">Non-Veg</option>
+                <option value="None">None</option>
+                </select>
+                <div class="invalid-feedback">Please choose food preference.</div>
+            </div>
+            </form>
 
-          <div class="mb-3">
-            <label class="form-label">Food Preference</label>
-            <select class="form-select" name="foodPref">
-              <option>Select</option>
-              <option>Veg</option>
-              <option>Non-Veg</option>
-              <option>None</option>
-            </select>
-          </div>
-        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -187,38 +224,27 @@
     </div>
   </div>
 </div>
-<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
-    <div id="liveToast" class="toast align-items-center text-bg-dark border-0" role="alert">
-        <div class="d-flex">
-            <div class="toast-body"></div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    </div>
-</div>
 @endsection
 
 @section('scripts')
 <script>
 $(document).ready(function () {
-    const apiUrl = "{{ route('front.travel.flight.store') }}";
-    const userId = "{{ Auth::guard('front_user')->id() }}";
-
     let personList = [];
 
-    // Toggle trip type
     $('#oneWayBtn').click(function () {
         $(this).addClass('active');
         $('#roundTripBtn').removeClass('active');
         $('#return-div').hide();
+        $('#tripTypeInput').val(1);
     });
 
     $('#roundTripBtn').click(function () {
         $(this).addClass('active');
         $('#oneWayBtn').removeClass('active');
         $('#return-div').show();
+        $('#tripTypeInput').val(2);
     });
 
-    // Bill To logic
     $('input[name="bill"]').on('change', function () {
         if ($(this).val() === '2') {
             $('#matter-div').show();
@@ -229,29 +255,66 @@ $(document).ready(function () {
         }
     });
 
-    // Save person modal
-    $('#savePersonBtn').click(function () {
-        const selects = $('#addPersonModal select');
-        const inputs = $('#addPersonModal input');
-        const title = $('#addPersonModal select[name="title"]').val();
-        const name = $('#addPersonModal input[name="name"]').val().trim();
-        const seatPref = $('#addPersonModal select[name="seatPref"]').val();
-        const foodPref = $('#addPersonModal select[name="foodPref"]').val();
+    $('#addPersonModal').on('show.bs.modal', function () {
+        const $nameInput = $(this).find('input[name="name"]');
 
+        // If this is NOT the first traveller, clear the name
+        if (personList.length > 0) {
+            $nameInput.val(''); 
+        }
+    });
+
+    $('#savePersonBtn').click(function () {
+        $('#personForm .form-control, #personForm .form-select').removeClass('is-invalid');
+
+        let title = $('#addPersonModal select[name="title"]').val();
+        let name = $('#addPersonModal input[name="name"]').val().trim();
+        let seat_preference = $('#addPersonModal select[name="seatPref"]').val();
+        let food_preference = $('#addPersonModal select[name="foodPref"]').val();
+
+        let valid = true;
 
         if (!name) {
-            showToast('Please enter name', 'warning');
-            return;
+            $('#addPersonModal input[name="name"]').addClass('is-invalid');
+            valid = false;
         }
 
-        const person = { id: Date.now(), title, name, seatPref, foodPref };
+        if (!seat_preference) {
+            $('#addPersonModal select[name="seatPref"]').addClass('is-invalid');
+            valid = false;
+        }
+
+        if (!food_preference) {
+            $('#addPersonModal select[name="foodPref"]').addClass('is-invalid');
+            valid = false;
+        }
+
+        if (!valid) return;
+
+        let person = { 
+            id: Date.now(), 
+            name : `${title} ${name}`,
+            seat_preference, 
+            food_preference
+        };
         personList.push(person);
         renderPersons();
         $('#addPersonModal').modal('hide');
         $('#personForm')[0].reset();
+        showToast('Person added successfully!', 'success');
     });
 
-    // Render person cards
+    $('#personForm').on('input change', '.form-control, .form-select', function () {
+        $(this).removeClass('is-invalid');
+        $(this).siblings('.invalid-feedback').text($(this).attr('name') === 'name'
+            ? 'Please enter name.'
+            : $(this).attr('name') === 'seatPref'
+            ? 'Please choose seat preference.'
+            : 'Please choose food preference.'
+        );
+    });
+
+
     function renderPersons() {
         const $wrapper = $('#personCardWrapper');
         const $body = $('#personCardBody');
@@ -265,88 +328,58 @@ $(document).ready(function () {
                 ${i > 0 ? '<hr class="my-3 border-gold">' : ''}
                 <div class="d-flex justify-content-between align-items-center flex-wrap py-2">
                     <div>
-                        <h6 class="mb-1 fw-semibold">${p.title} ${p.name}</h6>
+                        <h6 class="mb-1 fw-semibold"> ${p.name}</h6>
                         <p class="mb-0 text-muted small">
-                            <strong>Seat:</strong> ${p.seatPref} &nbsp;|&nbsp;
-                            <strong>Food:</strong> ${p.foodPref}
+                            <strong>Seat:</strong> ${p.seat_preference} &nbsp;|&nbsp;
+                            <strong>Food:</strong> ${p.food_preference}
                         </p>
                     </div>
-                    <button class="btn btn-sm btn-outline-danger rounded-circle delete-person" data-id="${p.id}" title="Remove">
+                    <button class="btn btn-sm btn-outline-danger rounded-circle delete-person" data-id="${p.id}">
                         <i class="bi bi-trash"></i>
                     </button>
-                </div>
-            `;
+                </div>`;
             $body.append(cardHtml);
         });
     }
+        $(function () {
+            $('input[name="from"]').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "{{ route('front.travel.flight.search') }}",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 1, // start after typing 1 character
+            });
 
-    // Delete person
+            // Autocomplete for "To"
+            $('input[name="to"]').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "{{ route('front.travel.flight.search') }}",
+                        data: { term: request.term },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 1
+            });
+        });
+
+
     $(document).on('click', '.delete-person', function () {
         const id = $(this).data('id');
         personList = personList.filter(p => p.id !== id);
         renderPersons();
     });
 
-    // Submit form
-    $('#flightBookingForm').on('submit', function (e) {
-        e.preventDefault();
-
-        const trip_type = $('#roundTripBtn').hasClass('active') ? 2 : 1;
-        const bill = $('input[name="bill"]:checked').val();
-
-        const data = {
-            user_id: userId,
-            trip_type: trip_type,
-            from: $('input[name="from"]').val(),
-            to: $('input[name="to"]').val(),
-            departure_date: $('input[name="departure_date"]').val(),
-            arrival_time: $('input[name="departure-time"]:checked').val(),
-            return_date: trip_type === 2 ? $('input[name="return_date"]').val() : null,
-            return_time: trip_type === 2 ? $('input[name="return-time"]:checked').val() : null,
-            bill_to: $('input[name="bill"]:checked').val(),
-            matter_code: bill === '2' ? $('input[name="matter_code"]').val() : null,
-            purpose: $('textarea[name="purpose"]').val(),
-            description: $('textarea[name="description"]').val(),
-            remarks: $('textarea[name="remarks"]').val(),
-            traveller: personList.map(p => ({
-                name: p.name,
-                seat_preference: p.seatPref,
-                food_preference: p.foodPref
-            }))
-        };
-
-        // console.log(data);
-
-       $.ajax({
-            url: apiUrl,
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}" // CSRF token for Laravel
-            },
-            data: data,
-            success: function (res) {
-                if (res.status) {
-                    showToast('Flight booking submitted successfully', 'success');
-                    $('#flightBookingForm')[0].reset();
-                    $('#personCardWrapper').hide();
-                    personList = [];
-
-                    setTimeout(() => {
-                        window.location.href = "{{ route('front.travel.dashboard') }}";
-                    }, 1500);
-                } else {
-                    showToast('⚠️ ' + res.message, 'warning');
-                }
-            },
-            error: function (xhr) {
-                showToast('Something went wrong', 'danger');
-            }
-        });
-
+    $('#flightBookingForm').on('submit', function () {
+        $('#travellerDataInput').val(JSON.stringify(personList));
     });
 });
 </script>
 @endsection
-
-
-

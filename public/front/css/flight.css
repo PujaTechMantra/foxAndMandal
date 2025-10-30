@@ -166,6 +166,48 @@
     color: #fff;
 }
 
+/* ====== Booking Card ====== */
+.booking-card {
+    background: #fff9f3;
+    border: 1px solid #e2c6a1;
+    border-radius: 16px;
+    /* Make shadow darker and more visible */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.booking-card:hover {
+    transform: translateY(-4px);
+    /* Slightly deeper hover shadow */
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+}
+/* ====== Traveller Box ====== */
+.traveller-box {
+    background: #fff;
+    border: 1px solid #e2c6a1;
+    border-radius: 12px;
+}
+
+/* ====== Gold Button Variants ====== */
+.btn-outline-gold {
+    border: 1px solid #d6a56d;
+    color: #4b1d0d;
+    background: #fff;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.btn-outline-gold:hover {
+    background: linear-gradient(135deg, #d6a56d, #b6783c);
+    color: #fff;
+}
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 /* ====== Responsive ====== */
 @media (max-width: 992px) {
     .booking-wrapper {
@@ -181,5 +223,50 @@
         width: 40px;
         height: 40px;
         font-size: 1.1rem;
+    }
+
+    .back-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+    .booking-card .card-body {
+        padding: 1.5rem;
+    }
+    .btn-gold, .btn-outline-gold {
+        width: 100%;
+        text-align: center;
+    }
+    .d-flex.flex-wrap.justify-content-end {
+        justify-content: center !important;
+    }
+}
+@media (max-width: 576px) {
+    .booking-card h5 {
+        font-size: 1rem;
+    }
+    .badge {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+
+     .modal-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modal-footer .btn-gold {
+        width: 100%;
+        font-size: 1rem;
+        padding: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .modal-footer .btn-secondary {
+        width: 100%;
+        background: #f8f9fa;
+        border-radius: 10px;
+        color: #4b1d0d;
+        font-weight: 500;
     }
 }

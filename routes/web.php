@@ -230,7 +230,12 @@ Route::prefix('front')->name('front.')->group(function () {
         
         Route::get('/travel/flight', [FlightController::class, 'index'])->name('travel.flight.index');
         Route::post('/travel/flight/store', [FlightController::class, 'store'])->name('travel.flight.store');
-    
+        Route::get('/travel/flight/searchAirports', [FlightController::class, 'searchAirports'])->name('travel.flight.search');
+        Route::get('/travel/flight/history', [FlightController::class, 'history'])->name('travel.flight.history');
+        Route::post('/travel/flight/cancelBooking',[FlightController::class,'cancelBooking'])->name('travel.flight.cancel');
+        Route::get('/travel/flight/{id}/edit',[FlightController::class,'edit'])->name('travel.flight.edit');
+        Route::post('/travel/flight/{id}/update',[FlightController::class,'update'])->name('travel.flight.update');
+        
        // Route::get('/erp/dashboard', [FrontAuthController::class, 'erp'])->name('erp.dashboard');
         // Route::get('/ildms/dashboard', [FrontAuthController::class, 'ildms'])->name('ildms.dashboard');
 

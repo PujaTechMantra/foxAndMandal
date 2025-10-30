@@ -130,17 +130,17 @@
                 <label class="form-label">Bill To</label>
                 <div class="radio-group horizontal">
                     <label><input type="radio" name="bill" value="1" {{ old('bill', $booking->bill_to) == 1 ? 'checked' : '' }}> Firm</label>
-                    <label><input type="radio" name="bill" value="2" {{ old('bill', $booking->bill_to) == 2 ? 'checked' : '' }}> Matter</label>
-                    <label><input type="radio" name="bill" value="3" {{ old('bill', $booking->bill_to) == 3 ? 'checked' : '' }}> Third Party</label>
+                    <label><input type="radio" name="bill" value="3" {{ old('bill', $booking->bill_to) == 3 ? 'checked' : '' }}> Matter</label>
+                    <label><input type="radio" name="bill" value="2" {{ old('bill', $booking->bill_to) == 2 ? 'checked' : '' }}> Third Party</label>
                 </div>
             </div>
 
-            <div class="mb-5" id="remarks-div" style="display: {{ old('bill', $booking->bill_to) == 2 ? 'none' : 'block' }};">
+            <div class="mb-5" id="remarks-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'none' : 'block' }};">
                 <label class="form-label">Remarks</label>
                 <textarea class="form-control" name="remarks" rows="2">{{ old('remarks', $booking->remarks ?? '') }}</textarea>
             </div>
 
-            <div class="mb-5" id="matter-div" style="display: {{ old('bill', $booking->bill_to) == 2 ? 'block' : 'none' }};">
+            <div class="mb-5" id="matter-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'block' : 'none' }};">
                 <label class="form-label">Enter Matter Code</label>
                 <input class="form-control" name="matter_code" type="text" 
                        value="{{ old('matter_code', optional($booking->matter)->matter_code) }}">
@@ -233,7 +233,7 @@ $(document).ready(function () {
 
     // Bill to toggle
     $('input[name="bill"]').on('change', function () {
-        if ($(this).val() === '2') {
+        if ($(this).val() === '3') {
             $('#matter-div').show();
             $('#remarks-div').hide();
         } else {

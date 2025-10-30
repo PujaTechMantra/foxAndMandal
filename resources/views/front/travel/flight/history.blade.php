@@ -51,10 +51,14 @@
 
                     <div class="col-md-6">
                         <p class="mb-2"><strong>Bill To:</strong> 
-                            {{ $booking->bill_to == 1 ? 'Firm' : ($booking->bill_to == 2 ? 'Matter' : 'Third Party') }}
+                            {{ $booking->bill_to == 1 ? 'Firm' : ($booking->bill_to == 2 ? 'Third Party' : 'Matter') }}
                         </p>
-                        <p class="mb-2"><strong>Remarks:</strong> {{ $booking->remarks ?? '—' }}</p>
 
+                        @if($booking->bill_to == 3)
+                            <p class="mb-2"><strong>Matter Code:</strong> {{ $booking->matter->matter_code ?? 'N/A' }}</p>
+                        @else
+                            <p class="mb-2"><strong>Remarks:</strong> {{ $booking->remarks ?? 'N/A' }}</p>
+                        @endif
                         <div class="mt-3">
                             <strong>Travellers:</strong>
                             @foreach($booking->traveller as $traveller)
@@ -70,11 +74,17 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2 mt-4 flex-wrap">
-                    <a href="{{route('front.travel.flight.edit',$booking->order_no)}}" class="btn btn-gold btn-sm px-3 mb-2">
+                    <a href="{{ route('front.travel.flight.edit', $booking->order_no) }}" 
+                    class="btn btn-gold btn-sm px-3 mb-2 {{ $booking->status == 4 ? 'disabled' : '' }}">
                         <i class="bi bi-pencil me-1"></i> Edit
                     </a>
-                    <button class="btn btn-outline-gold btn-sm px-3 mb-2 cancelBtn" 
-                        data-id="{{ $booking->order_no }}" data-bs-toggle="modal" data-bs-target="#cancelModal">
+
+                    <button 
+                        class="btn btn-outline-gold btn-sm px-3 mb-2 cancelBtn" 
+                        data-id="{{ $booking->order_no }}" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#cancelModal"
+                        {{ $booking->status == 4 ? 'disabled' : '' }}>
                         <i class="bi bi-x-circle me-1"></i> Cancel
                     </button>
                 </div>

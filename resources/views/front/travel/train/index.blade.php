@@ -168,7 +168,7 @@
 
             <div class="mb-5" id="matter-div" style="display: {{ old('bill') == 3 ? 'block' : 'none' }};">
                 <label class="form-label">Enter Matter Code</label>
-                <input class="form-control" name="matter_code" type="text" value="{{ old('matter_code') }}" placeholder="Type at least 3 characters to search..">
+                <input class="form-control" id="matterCodeInput" name="matter_code" type="text" value="{{ old('matter_code') }}" placeholder="Type at least 3 characters to search..">
             </div>
 
             <div class="text-center">
@@ -394,6 +394,27 @@ $(document).ready(function () {
     $('#trainBookingForm').on('submit', function () {
         $('#travellerDataInput').val(JSON.stringify(personList));
     });
+
+      $("#matterCodeInput").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "{{ route('front.travel.matter-code.suggest') }}",
+                    data: { query: request.term },
+                    success: function(data) {
+                        response($.map(data, function(item) {
+                            return {
+                                label: item.matter_code + ' (' + item.client_name + ')',
+                                value: item.matter_code
+                            };
+                        }));
+                    }
+                });
+            },
+            minLength: 1,
+            select: function(event, ui) {
+                $("#matterCodeInput").val(ui.item.value);
+            }
+        });
 });
 </script>
 @endsection

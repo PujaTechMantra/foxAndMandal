@@ -105,7 +105,7 @@ class TrainController extends Controller
             ]);
 
             return redirect()
-                ->route('front.travel.train.index')
+                ->route('front.travel.train.dashboard')
                 ->with('success', 'Train/Bus booked successfully!');
 
         } catch (\Exception $e) {

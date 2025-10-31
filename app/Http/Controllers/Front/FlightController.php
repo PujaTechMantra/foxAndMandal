@@ -60,8 +60,8 @@ class FlightController extends Controller
             $foodPreferences = $travellers->pluck('food_preference')->filter()->implode(',');
 
             $matterId = null;
-            if ((int)$validatedData['bill'] === 3 && !empty($request['matter_code'])) {
-                $user = User::find($validatedData['user_id']);
+            if ((int)$request->bill === 3 && !empty($request['matter_code'])) {
+                $user = User::find($request->user_id);
                 $clientName = $user->name ?? 'Unknown';
                 
                 $matter = MatterCode::firstOrCreate(

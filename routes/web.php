@@ -189,7 +189,7 @@ Route::group(['middleware' => ['auth']], function() {
      Route::resource('matter-code', MatterCodeController::class);
      Route::get('downloadSampleCsv', [MatterCodeController::class, 'downloadSampleCsv'])->name('mattercode.sample');
      Route::post('uploadCsv', [MatterCodeController::class, 'uploadCsv'])->name('mattercode.uploadCsv');
-     Route::get('cab-booking/matter-code/suggest', [MatterCodeController::class, 'suggestMatterCode']);
+     Route::get('cab-booking/matter-code/suggest', [MatterCodeController::class, 'suggestMatterCode'])->name('matter-code.suggest');
 
      Route::resource('properties', PropertyController::class);
      
@@ -248,6 +248,8 @@ Route::prefix('front')->name('front.')->group(function () {
             Route::post('/train/cancelBooking',[TrainController::class,'cancelBooking'])->name('train.cancel');
             Route::get('/train/{id}/edit',[TrainController::class,'edit'])->name('train.edit');
             Route::post('/train/{id}/update',[TrainController::class,'update'])->name('train.update');
+
+            Route::get('/matter-code/search',[MatterCodeController::class,'suggestMatterCode'])->name('matter-code.suggest');
         });
        // Route::get('/erp/dashboard', [FrontAuthController::class, 'erp'])->name('erp.dashboard');
         // Route::get('/ildms/dashboard', [FrontAuthController::class, 'ildms'])->name('ildms.dashboard');

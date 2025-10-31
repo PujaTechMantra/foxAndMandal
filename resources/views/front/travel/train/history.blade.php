@@ -49,7 +49,7 @@
                             <p class="mb-2"><strong>Time of Return:</strong> {{ $booking->return_time }}</p>
                         @endif
                         
-                        <p class="mb-2"><strong>Purpose:</strong> {{ ($booking->type == 1) ? 'Train' : 'Bus' }}</p>
+                        <p class="mb-2"><strong>Preference:</strong> {{ ($booking->type == 1) ? 'Train' : 'Bus' }}</p>
 
                         <p class="mb-2"><strong>Purpose:</strong> {{ $booking->purpose ?? 'N/A' }}</p>
                         <p class="mb-2"><strong>Description:</strong> {{ $booking->description ?? 'N/A' }}</p>
@@ -83,6 +83,48 @@
                         </div>
                     </div>
                 </div>
+
+                @if($booking->status == 3)
+                    <hr class="my-4">
+
+                    <div class="row gy-3 align-items-start">
+                        <div class="col-md-6">
+                            <p class="mb-2 d-flex align-items-center gap-2 flex-wrap">
+                                <strong>Ticket :</strong>
+
+                                <a href="{{ !empty($booking->ticket) ? asset($booking->ticket) : '#' }}" 
+                                class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 shadow-sm" target="blank">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+
+                                <a href="{{ !empty($booking->ticket) ? asset($booking->ticket) : '#' }}" 
+                                class="btn btn-outline-success btn-sm d-flex align-items-center gap-1 shadow-sm" download>
+                                    <i class="bi bi-download"></i>
+                                </a>
+                            </p>
+
+                            <p class="mb-2">
+                                <strong>PNR :</strong> 
+                                <span class="text-dark fw-semibold">{{ $booking->pnr ?? '—' }}</span>
+                            </p>
+
+                            <p class="mb-2">
+                                <strong>{{ ($booking->type == 1 ? 'Train' : 'Bus')}} Number :</strong> 
+                                <span class="text-dark fw-semibold">{{ $booking->train_no ?? '—' }}</span>
+                            </p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>Dept. Date & Time :</strong>
+                                <span class="text-dark fw-semibold ms-1">
+                                   {{ \Carbon\Carbon::parse($booking->date_time)->format('d-m-Y H:i:s') }}
+                                    
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Action Buttons -->
                 <div class="d-flex justify-content-end gap-2 mt-4 flex-wrap">

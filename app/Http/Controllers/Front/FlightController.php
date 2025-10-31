@@ -60,24 +60,33 @@ class FlightController extends Controller
             $foodPreferences = $travellers->pluck('food_preference')->filter()->implode(',');
 
             $matterId = null;
-            if ($request->bill == 2 && $request->filled('matter_code')) {
-                $user = User::find($request->user_id);
+            if ((int)$validatedData['bill'] === 3 && !empty($request['matter_code'])) {
+                $user = User::find($validatedData['user_id']);
+                $clientName = $user->name ?? 'Unknown';
+                
                 $matter = MatterCode::firstOrCreate(
-                    ['matter_code' => $request->matter_code],
-                    ['client_name' => $user->name ?? 'Unknown']
+                    ['matter_code' => $request['matter_code']],
+                    ['client_name' => $clientName]
                 );
+                
                 $matterId = $matter->id;
             }
 
+            $tripType = $request->trip_type;
+
+            // If it's a one-way trip, force return_date and return_time to null
+            $returnDate = $tripType == 1 ? null : $request->input('return_date');
+            $returnTime = $tripType == 1 ? null : $request->input('return-time');
+
             FlightBooking::create([
                 'user_id' => $request->user_id,
-                'trip_type' => $request->trip_type,
+                'trip_type' => $tripType,
                 'from' => $request->from,
                 'to' => $request->to,
                 'departure_date' => $request->departure_date,
                 'arrival_time' => $request->input('departure-time'),
-                'return_date' => $request->input('return_date'),
-                'return_time' => $request->input('return-time'),
+                'return_date' => $returnDate,
+                'return_time' => $returnTime,
                 'traveller' => $travellerNames,
                 'seat_preference' => $seatPreferences,
                 'food_preference' => $foodPreferences,

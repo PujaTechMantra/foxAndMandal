@@ -26,6 +26,7 @@ class TrainBooking extends Model
         "return_time",
         'seat_preference',
         'purpose',
+        'status',
         'description',
         'food_preference'
     ];

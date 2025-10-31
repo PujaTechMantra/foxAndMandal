@@ -20,7 +20,7 @@ class FlightBooking extends Model
         'traveler_number',  
         'bill_to',  
         'arrival_time',  
-      
+        'status',
         'traveller',
         'matter_code',
         'sequence_no',

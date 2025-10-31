@@ -19,6 +19,7 @@ use App\Http\Controllers\Cave\CaveLocationController;
 use App\Http\Controllers\Cave\CaveCategoryController;
 use App\Http\Controllers\Front\Auth\FrontAuthController;
 Use App\Http\Controllers\Front\FlightController;
+Use App\Http\Controllers\Front\TrainController;
 use Illuminate\Support\Facades\Route;
 Route::get('/cache-clear', function() {
 	// \Artisan::call('route:cache');
@@ -228,14 +229,26 @@ Route::prefix('front')->name('front.')->group(function () {
         Route::get('/library/dashboard', [FrontAuthController::class, 'library'])->name('library.dashboard');
         Route::get('/cavity/dashboard', [FrontAuthController::class, 'cavity'])->name('cavity.dashboard');
         
-        Route::get('/travel/flight', [FlightController::class, 'index'])->name('travel.flight.index');
-        Route::post('/travel/flight/store', [FlightController::class, 'store'])->name('travel.flight.store');
-        Route::get('/travel/flight/searchAirports', [FlightController::class, 'searchAirports'])->name('travel.flight.search');
-        Route::get('/travel/flight/history', [FlightController::class, 'history'])->name('travel.flight.history');
-        Route::post('/travel/flight/cancelBooking',[FlightController::class,'cancelBooking'])->name('travel.flight.cancel');
-        Route::get('/travel/flight/{id}/edit',[FlightController::class,'edit'])->name('travel.flight.edit');
-        Route::post('/travel/flight/{id}/update',[FlightController::class,'update'])->name('travel.flight.update');
+
+        Route::prefix('travel')->name('travel.')->group(function () {
+
+            Route::get('/flight', [FlightController::class, 'index'])->name('flight.index');
+            Route::post('/flight/store', [FlightController::class, 'store'])->name('flight.store');
+            Route::get('/flight/searchAirports', [FlightController::class, 'searchAirports'])->name('flight.search');
+            Route::get('/flight/history', [FlightController::class, 'history'])->name('flight.history');
+            Route::post('/flight/cancelBooking',[FlightController::class,'cancelBooking'])->name('flight.cancel');
+            Route::get('/flight/{id}/edit',[FlightController::class,'edit'])->name('flight.edit');
+            Route::post('/flight/{id}/update',[FlightController::class,'update'])->name('flight.update');
         
+
+            Route::get('/train', [TrainController::class, 'index'])->name('train.index');
+            Route::post('/train/store', [TrainController::class, 'store'])->name('train.store');
+            Route::get('train/searchStation', [TrainController::class, 'searchStation'])->name('train.search');
+            Route::get('/train/history', [TrainController::class, 'history'])->name('train.history');
+            Route::post('/train/cancelBooking',[TrainController::class,'cancelBooking'])->name('train.cancel');
+            Route::get('/train/{id}/edit',[TrainController::class,'edit'])->name('train.edit');
+            Route::post('/train/{id}/update',[TrainController::class,'update'])->name('train.update');
+        });
        // Route::get('/erp/dashboard', [FrontAuthController::class, 'erp'])->name('erp.dashboard');
         // Route::get('/ildms/dashboard', [FrontAuthController::class, 'ildms'])->name('ildms.dashboard');
 

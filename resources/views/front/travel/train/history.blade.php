@@ -41,15 +41,16 @@
                     <!-- Left Column -->
                     <div class="col-md-6">
                         <p class="mb-2"><strong>Trip Type:</strong> {{ $booking->trip_type == 1 ? 'One Way' : 'Round Trip' }}</p>
-                        <p class="mb-2"><strong>Departure Date:</strong> {{ \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y') }}</p>
-                        <p class="mb-2"><strong>Departure Time:</strong> {{ $booking->departure_time }}</p>
+                        <p class="mb-2"><strong>Date of Travel:</strong> {{ \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y') }}</p>
+                        <p class="mb-2"><strong>Time of Travel:</strong> {{ $booking->departure_time }}</p>
 
                         @if($booking->trip_type == 2)
-                            <p class="mb-2"><strong>Return Date:</strong> {{ \Carbon\Carbon::parse($booking->return_date)->format('d-m-Y') }}</p>
-                            <p class="mb-2"><strong>Return Time:</strong> {{ $booking->return_time }}</p>
+                            <p class="mb-2"><strong>Date of Return:</strong> {{ \Carbon\Carbon::parse($booking->return_date)->format('d-m-Y') }}</p>
+                            <p class="mb-2"><strong>Time of Return:</strong> {{ $booking->return_time }}</p>
                         @endif
+                        
+                        <p class="mb-2"><strong>Purpose:</strong> {{ ($booking->type == 1) ? 'Train' : 'Bus' }}</p>
 
-                        <p class="mb-2"><strong>Train Class:</strong> {{ $booking->train_class ?? 'N/A' }}</p>
                         <p class="mb-2"><strong>Purpose:</strong> {{ $booking->purpose ?? 'N/A' }}</p>
                         <p class="mb-2"><strong>Description:</strong> {{ $booking->description ?? 'N/A' }}</p>
                     </div>
@@ -72,7 +73,10 @@
                                 <div class="traveller-box mt-2 border rounded-3 p-2 bg-light">
                                     <div><strong>{{ $traveller['title'] ?? '' }} {{ $traveller['name'] ?? '' }}</strong></div>
                                     <div class="small text-muted">
-                                        Seat: {{ $traveller['seat_preference'] ?? '—' }} | Berth: {{ $traveller['berth_preference'] ?? '—' }} | Food: {{ $traveller['food_preference'] ?? '—' }}
+                                        Seat Preference: {{ $traveller['seat_preference'] ?? '—' }} 
+                                    </div>
+                                    <div class="small text-muted">
+                                         Food Preference: {{ $traveller['food_preference'] ?? '—' }}
                                     </div>
                                 </div>
                             @endforeach

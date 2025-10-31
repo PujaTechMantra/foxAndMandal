@@ -209,10 +209,11 @@
             <div class="mb-3">
                 <label class="form-label">Seat Preference</label>
                 <select class="form-select" name="seatPref">
-                <option value="">Select</option>
-                <option value="Window">Window</option>
-                <option value="Aisle">Aisle</option>
-                <option value="Emergency Exit">Emergency Exit</option>
+                    <option value="">Select</option>
+                    <option value="AC1">AC1</option>
+                    <option value="AC2">AC2</option>
+                    <option value="AC3">AC3</option>
+                    <option value="ACC">ACC</option>
                 </select>
                 <div class="invalid-feedback">Please choose seat preference.</div>
             </div>

@@ -317,6 +317,7 @@ class FlightController extends Controller
         $newData = [
             'from' => $request->from,
             'to' => $request->to,
+            'trip_type' => $request->trip_type,
             'departure_date' => $request->departure_date,
             'arrival_time' => $request->input('departure-time'),
             'return_date' => $request->input('return_date'),

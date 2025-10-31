@@ -81,7 +81,7 @@
             </div>
 
             <!-- Return -->
-            <div class="row" id="return-div" style="display: {{ old('trip_type', $booking->trip_type) == 2 ? 'block' : 'none' }};">
+            <div class="row {{ old('trip_type', $booking->trip_type) == 2 ? '' : 'd-none' }}" id="return-div">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Return Date</label>
                     <input type="date" class="form-control" name="return_date"
@@ -117,12 +117,12 @@
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Purpose</label>
-                    <textarea class="form-control" rows="2" name="purpose">{{ old('purpose', $booking->purpose) }}</textarea>
+                    <textarea class="form-control" rows="2" name="purpose" placeholder="Please specify the purpose of booking.">{{ old('purpose', $booking->purpose) }}</textarea>
                 </div>
 
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Description</label>
-                    <textarea class="form-control" name="description" rows="2">{{ old('description', $booking->description) }}</textarea>
+                    <textarea class="form-control" name="description" rows="2" placeholder="Please enter flight details/other preference if any.">{{ old('description', $booking->description) }}</textarea>
                 </div>
             </div>
 
@@ -137,13 +137,13 @@
 
             <div class="mb-5" id="remarks-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'none' : 'block' }};">
                 <label class="form-label">Remarks</label>
-                <textarea class="form-control" name="remarks" rows="2">{{ old('remarks', $booking->remarks ?? '') }}</textarea>
+                <textarea class="form-control" name="remarks" rows="2" placeholder="Please give your remark.">{{ old('remarks', $booking->remarks ?? '') }}</textarea>
             </div>
 
             <div class="mb-5" id="matter-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'block' : 'none' }};">
                 <label class="form-label">Enter Matter Code</label>
                 <input class="form-control" name="matter_code" type="text" 
-                       value="{{ old('matter_code', optional($booking->matter)->matter_code) }}">
+                       value="{{ old('matter_code', optional($booking->matter)->matter_code) }}" placeholder="Type at least 3 characters to search..">
             </div>
 
             <div class="text-center">
@@ -176,7 +176,7 @@
             </div>
             <div class="col-md-8">
               <label class="form-label">Name</label>
-              <input type="text" class="form-control" name="name" placeholder="Enter name">
+              <input type="text" class="form-control" name="name" placeholder="Enter name of person.">
               <div class="invalid-feedback">Please enter name.</div>
             </div>
           </div>
@@ -220,14 +220,14 @@ $(document).ready(function () {
     $('#oneWayBtn').click(function () {
         $(this).addClass('active');
         $('#roundTripBtn').removeClass('active');
-        $('#return-div').hide();
+        $('#return-div').addClass('d-none');
         $('#tripTypeInput').val(1);
     });
 
     $('#roundTripBtn').click(function () {
         $(this).addClass('active');
         $('#oneWayBtn').removeClass('active');
-        $('#return-div').show();
+        $('#return-div').removeClass('d-none');
         $('#tripTypeInput').val(2);
     });
 
@@ -298,7 +298,6 @@ $(document).ready(function () {
         });
     }
 
-
     // Delete handler
     $(document).on('click', '.delete-person', function () {
         const index = $(this).data('index');
@@ -333,6 +332,9 @@ $(document).ready(function () {
     $('#flightBookingForm').on('submit', function () {
         $('#travellerDataInput').val(JSON.stringify(personList));
     });
+
 });
+
+   
 </script>
 @endsection

@@ -65,7 +65,11 @@
                                 <div class="traveller-box mt-2 border rounded-3 p-2 bg-light">
                                     <div><strong>{{ $traveller['title'] ?? '' }} {{ $traveller['name'] ?? '' }}</strong></div>
                                     <div class="small text-muted">
-                                        Seat: {{ $traveller['seat_preference'] ?? '—' }} | Food: {{ $traveller['food_preference'] ?? '—' }}
+                                        Seat Preference: {{ $traveller['seat_preference'] ?? '—' }} 
+                                    </div>
+                                    
+                                    <div class="small text-muted">
+                                         Food Preference: {{ $traveller['food_preference'] ?? '—' }}
                                     </div>
                                 </div>
                             @endforeach

@@ -1,6 +1,6 @@
 @extends('front.layouts.app')
 
-@section('title', 'Edit train Booking')
+@section('title', 'Edit Train Booking')
 
 @section('content')
 <div class="container py-5">
@@ -11,7 +11,7 @@
                class="back-btn d-flex align-items-center justify-content-center me-3 text-decoration-none">
                 <i class="bi bi-arrow-left"></i>
             </a>
-            <h3 class="mb-0 fw-semibold text-dark">Edit train Booking</h3>
+            <h3 class="mb-0 fw-semibold text-dark">Edit Train Booking</h3>
         </div>
     </div>
 
@@ -61,18 +61,18 @@
 
             <div class="row">
                 <div class="col-md-6 mb-4">
-                    <label class="form-label">Departure Date</label>
+                    <label class="form-label">Date of Departure</label>
                     <input type="date" class="form-control" name="departure_date"
-                           value="{{ old('departure_date', $booking->departure_date) }}" min="{{ $today }}">
+                           value="{{ old('departure_date', $booking->travel_date) }}" min="{{ $today }}">
                 </div>
 
                 <div class="col-md-6 mb-4">
-                    <label class="form-label">Departure Time</label>
+                    <label class="form-label">Time of Departure</label>
                     <div class="radio-group">
                         @foreach($times as $value => $label)
                             <label>
                                 <input type="radio" name="departure_time" value="{{ $value }}"
-                                    {{ old('departure_time', $booking->arrival_time) == $value ? 'checked' : '' }}>
+                                    {{ old('departure_time', $booking->departure_time) == $value ? 'checked' : '' }}>
                                 {{ $label }} <span>{{ $value }}</span>
                             </label>
                         @endforeach
@@ -81,14 +81,14 @@
             </div>
 
             <!-- Return -->
-            <div class="row" id="return-div" style="display: {{ old('trip_type', $booking->trip_type) == 2 ? 'block' : 'none' }};">
+            <div class="row {{ old('trip_type', $booking->trip_type) == 2 ? '' : 'd-none' }}" id="return-div">
                 <div class="col-md-6 mb-4">
-                    <label class="form-label">Return Date</label>
+                    <label class="form-label">Date of Return</label>
                     <input type="date" class="form-control" name="return_date"
                            value="{{ old('return_date', $booking->return_date) }}" min="{{ $today }}">
                 </div>
                 <div class="col-md-6 mb-4">
-                    <label class="form-label">Return Time</label>
+                    <label class="form-label">Time of Return</label>
                     <div class="radio-group">
                         @foreach($times as $value => $label)
                             <label>
@@ -98,6 +98,13 @@
                             </label>
                         @endforeach
                     </div>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Preference</label>
+                <div class="radio-group horizontal">
+                    <label><input type="radio" name="preference" checked value="1" {{ old('preference',$booking->type) == 1 ? 'checked' : '' }}>Train</label>
+                    <label><input type="radio" name="preference" value="2" {{ old('preference',$booking->type) == 2 ? 'checked' : '' }}>Bus</label>
                 </div>
             </div>
 
@@ -117,12 +124,12 @@
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Purpose</label>
-                    <textarea class="form-control" rows="2" name="purpose">{{ old('purpose', $booking->purpose) }}</textarea>
+                    <textarea class="form-control" rows="2" name="purpose" placeholder="Please specify the purpose of booking.">{{ old('purpose', $booking->purpose) }}</textarea>
                 </div>
 
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Description</label>
-                    <textarea class="form-control" name="description" rows="2">{{ old('description', $booking->description) }}</textarea>
+                    <textarea class="form-control" name="description" rows="2" placeholder="Please enter train details/other preference if any.">{{ old('description', $booking->description) }}</textarea>
                 </div>
             </div>
 
@@ -137,13 +144,13 @@
 
             <div class="mb-5" id="remarks-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'none' : 'block' }};">
                 <label class="form-label">Remarks</label>
-                <textarea class="form-control" name="remarks" rows="2">{{ old('remarks', $booking->remarks ?? '') }}</textarea>
+                <textarea class="form-control" name="remarks" rows="2" placeholder="Please give your remark.">{{ old('remarks', $booking->remarks ?? '') }}</textarea>
             </div>
 
             <div class="mb-5" id="matter-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'block' : 'none' }};">
                 <label class="form-label">Enter Matter Code</label>
                 <input class="form-control" name="matter_code" type="text" 
-                       value="{{ old('matter_code', optional($booking->matter)->matter_code) }}">
+                       value="{{ old('matter_code', optional($booking->matter)->matter_code) }}" placeholder="Type at least 3 characters to search..">
             </div>
 
             <div class="text-center">
@@ -220,14 +227,14 @@ $(document).ready(function () {
     $('#oneWayBtn').click(function () {
         $(this).addClass('active');
         $('#roundTripBtn').removeClass('active');
-        $('#return-div').hide();
+        $('#return-div').addClass('d-none');
         $('#tripTypeInput').val(1);
     });
 
     $('#roundTripBtn').click(function () {
         $(this).addClass('active');
         $('#oneWayBtn').removeClass('active');
-        $('#return-div').show();
+        $('#return-div').removeClass('d-none');
         $('#tripTypeInput').val(2);
     });
 

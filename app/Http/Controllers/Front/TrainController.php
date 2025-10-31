@@ -137,7 +137,7 @@ class TrainController extends Controller
         return response()->json($results);
     }
 
-     public function history()
+    public function history()
     {
         $userId = auth()->guard('front_user')->id();
 
@@ -219,6 +219,156 @@ class TrainController extends Controller
             ->with('success', 'Your booking has been cancelled successfully.');
     }
 
+    public function edit($order_no)
+    {
+        $booking = TrainBooking::where('order_no', $order_no)->firstOrFail();
 
+        $travellers = explode(',', $booking->traveller ?? '');
+        $seatPreferences = explode(',', $booking->seat_preference ?? '');
+        $foodPreferences = explode(',', $booking->food_preference ?? '');
+
+        $formattedTravellers = [];
+
+        foreach ($travellers as $index => $traveller) {
+            if (!$traveller) continue;
+            $name = $traveller;
+
+            $formattedTravellers[] = [
+                'id' => $index + 1,
+                'name' => $name,
+                'seat_preference' => $seatPreferences[$index] ?? 'N/A',
+                'food_preference' => $foodPreferences[$index] ?? 'N/A',
+            ];
+        }
+
+        $booking->traveller = $formattedTravellers;
+
+        return view('front.travel.train.edit', compact('booking'));
+    }
+
+    public function update(Request $request)
+    {
+        $request->merge([
+            'traveller' => json_decode($request->traveller_data, true),
+        ]);
+
+        $validator = Validator::make($request->all(), [
+            'order_no' => 'required|exists:train_bookings,order_no',
+            'trip_type' => 'required|integer|in:1,2',
+            'from' => 'required|string|max:255',
+            'to' => 'required|string|max:255',
+            'departure_date' => 'required|date',
+            'departure_time' => 'required|string',
+            'return_date' => 'nullable|date',
+            'return_time' => 'nullable|string',
+            'bill' => 'required|integer|in:1,2,3',
+            'traveller' => 'required|array',
+            'traveller.*.name' => 'required|string|max:255',
+            'traveller.*.seat_preference' => 'nullable|string|max:255',
+            'traveller.*.food_preference' => 'nullable|string|max:255',
+            'preference' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        try {
+            $validatedData = $validator->validated();
+
+            // Fetch existing booking
+            $booking = TrainBooking::where('order_no', $validatedData['order_no'])->firstOrFail();
+
+            // Check 7 PM – 10 AM restriction
+            $now = now();
+            $currentHour = (int) $now->format('H');
+            if ($currentHour >= 19 || $currentHour < 10) {
+                return redirect()->back()->with('error',
+                    'Your Travel requisition is registered. We shall get back to you in next business hours.In case of any urgency, you may contact the Travel Desk (Admin) directly on mobile phone.'
+                );
+            }
+
+            // Prevent edits less than 6 hours before travel
+            $departureTime = \Carbon\Carbon::parse($booking->travel_date);
+            if ($now->greaterThan($departureTime->copy()->subHours(6))) {
+                return redirect()->back()->with('error',
+                    'Edits must be made at least 6 hours before the pickup time.'
+                );
+            }
+
+            // Prepare traveller data
+            $travellerNames = collect($validatedData['traveller'])->pluck('name')->implode(',');
+            $seatPreferences = collect($validatedData['traveller'])->pluck('seat_preference')->implode(',');
+            $foodPreferences = collect($validatedData['traveller'])->pluck('food_preference')->implode(',');
+
+            // Bill 3 → Create or link MatterCode
+            $matterId = null;
+            if ((int)$validatedData['bill'] === 3 && !empty($request['matter_code'])) {
+                $user = User::find($booking->user_id);
+                $clientName = $user->name ?? 'Unknown';
+                $matter = MatterCode::firstOrCreate(
+                    ['matter_code' => $request['matter_code']],
+                    ['client_name' => $clientName]
+                );
+                $matterId = $matter->id;
+            }
+
+            $tripType = $validatedData['trip_type'] ?? null;
+
+            // If trip_type == 1 (one-way), set return values to null
+            $returnDate = $tripType == 1 ? null : ($request['return_date'] ?? null);
+            $returnTime = $tripType == 1 ? null : ($request['return_time'] ?? null);
+
+            // Prepare updated fields
+            $newData = [
+                'bill_to' => $validatedData['bill'],
+                'from' => $validatedData['from'],
+                'to' => $validatedData['to'],
+                'travel_date' => $validatedData['departure_date'],
+                'departure_time' => $validatedData['departure_time'],
+                'type' => $validatedData['preference'],
+                'trip_type' => $tripType,
+                'return_date' => $returnDate,
+                'return_time' => $returnTime,
+                'matter_code' => $matterId,
+                'traveller' => $travellerNames,
+                'seat_preference' => $seatPreferences,
+                'food_preference' => $foodPreferences,
+                'purpose' => $request->purpose ?? null,
+                'description' => $request->description ?? null,
+                'updated_at' => now(),
+            ];
+
+            // Log edits (compare old vs new values)
+            foreach ($newData as $field => $newValue) {
+                $oldValue = $booking->$field ?? null;
+                if ($newValue != $oldValue) {
+                    DB::table('edit_logs')->insert([
+                        'table_name' => 'train_bookings',
+                        'record_id' => $booking->id,
+                        'field' => $field,
+                        'old_value' => $oldValue,
+                        'new_value' => $newValue,
+                        'updated_by' => auth()->guard('front_user')->id() ?? null,
+                        'created_at' => now(),
+                    ]);
+                }
+            }
+
+            // Update booking
+            $booking->update($newData);
+
+            return redirect()
+                ->route('front.travel.train.history')
+                ->with('success', 'Train Booking updated successfully.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Something went wrong while updating. Please try again.')
+                ->withInput();
+        }
+    }
 
 }

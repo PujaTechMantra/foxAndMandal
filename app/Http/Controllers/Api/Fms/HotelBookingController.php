@@ -16,44 +16,7 @@ use Carbon\Carbon;
 use DB;
 class HotelBookingController extends Controller
 {
-    // public function store(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'user_id' => 'required|exists:users,id',
-    //         'room_id' => 'required|exists:rooms,id',
-    //         'property_id' => 'required|exists:properties,id',
-    //         'checkin_date' => 'required|date',
-    //         'checkout_date' => 'required|date|after:checkin_date',
-    //         'guest_number' => 'required|integer|min:1',
-    //         'room_number' => 'required|integer|min:1',
-    //         'bill_to' => 'required|integer|in:1,2,3', 
-            
-    //     ]);
-    
-    //     if ($validator->fails()) {
-    //         return response()->json(['status' => false, 'errors' => $validator->errors()], 400);
-    //     }
-    
-    //     $validatedData = $validator->validated();
-    
-    //     $checkinDate = Carbon::parse($validatedData['checkin_date'])->format('Y-m-d l');
-    //     $checkoutDate = Carbon::parse($validatedData['checkout_date'])->format('Y-m-d l');
-    
-    //     $booking = HotelBooking::create([
-    //         'user_id' => $validatedData['user_id'], 
-    //         'room_id' => $validatedData['room_id'],
-    //         'property_id' => $validatedData['property_id'],
-    //         'checkin_date' => $checkinDate,  
-    //         'checkout_date' => $checkoutDate, 
-    //         'guest_number' => $validatedData['guest_number'],
-    //         'room_number' => $validatedData['room_number'],
-    //         'bill_to' => $validatedData['bill_to'],
-
-    //     ]);
-    
-    //     return response()->json(['status' => true, 'message' => 'Booking created successfully', 'data' => $booking], 201);
-    // }
-
+   
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

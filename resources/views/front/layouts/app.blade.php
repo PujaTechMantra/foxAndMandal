@@ -12,6 +12,7 @@
     <link href="https://cdn-uicons.flaticon.com/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link href="{{ asset('front/css/style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <link href="{{ asset('front/css/flight.css') }}" rel="stylesheet">
 
@@ -97,6 +98,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     
     <script> 
         document.addEventListener('DOMContentLoaded', function () {
@@ -108,6 +110,15 @@
             })
         })
 
+    flatpickr("#departure_date", {
+        dateFormat: "d-m-Y",
+        minDate: "today"
+    });
+    flatpickr(".datetimepicker", {
+        enableTime: true,
+        dateFormat: "d-m-Y H:i", 
+        time_24hr: true
+    });
 </script>
     @yield('scripts')
 </body>

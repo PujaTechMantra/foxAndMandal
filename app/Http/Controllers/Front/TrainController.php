@@ -28,9 +28,9 @@ class TrainController extends Controller
             'trip_type' => 'required|integer|in:1,2',
             'from' => 'required|string|max:255',
             'to' => 'required|string|max:255',
-            'departure_date' => 'required|date',
+            'departure_date' => 'required',
             'departure_time' => 'required|string',
-            'return_date' => 'nullable|date',
+            'return_date' => 'nullable',
             'return_time' => 'nullable|string',
             'bill' => 'required|integer|in:1,2,3',
             'traveller' => 'required|array',
@@ -214,6 +214,16 @@ class TrainController extends Controller
             'updated_at' => now(),
         ]);
 
+        // DB::table('edit_logs')->insert([
+        //     'table_name' => 'train_bus_bookings',
+        //     'record_id' => $orderData->id,
+        //     'field' => 'status',
+        //     'old_value' => $oldValue,
+        //     'new_value' => 4,
+        //     'updated_by' => $orderData->user_id,
+        //     'created_at' => now(),
+        // ]);
+
         return redirect()
             ->route('front.travel.train.history')
             ->with('success', 'Your booking has been cancelled successfully.');
@@ -257,9 +267,9 @@ class TrainController extends Controller
             'trip_type' => 'required|integer|in:1,2',
             'from' => 'required|string|max:255',
             'to' => 'required|string|max:255',
-            'departure_date' => 'required|date',
+            'departure_date' => 'required',
             'departure_time' => 'required|string',
-            'return_date' => 'nullable|date',
+            'return_date' => 'nullable',
             'return_time' => 'nullable|string',
             'bill' => 'required|integer|in:1,2,3',
             'traveller' => 'required|array',

@@ -62,12 +62,11 @@
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Departure Date</label>
                     <input 
-                        type="date" 
+                        type="text" 
                         class="form-control" 
                         name="departure_date"
-                        value="{{ old('departure_date', $today) }}" 
+                        value="{{ old('departure_date', now()->format('d-m-Y')) }}" 
                         id="departure_date"
-                        min="{{ $today }}"
                     >
                 </div>
 
@@ -98,7 +97,7 @@
             <div class="row" id="return-div" style="display: {{ old('trip_type', 1) == 2 ? 'block' : 'none' }};">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Return Date</label>
-                    <input type="date" class="form-control" name="return_date" value="{{ old('departure_date', $today) }}" min="{{ $today }}">
+                    <input type="text" class="form-control" name="return_date" value="{{ old('return_date', now()->format('d-m-Y')) }}">
                 </div>
 
                 <div class="col-md-6 mb-4">

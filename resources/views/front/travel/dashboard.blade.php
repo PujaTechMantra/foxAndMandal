@@ -37,7 +37,7 @@
         </div>
 
         <div class="col-6 col-md-3">
-            <a href="#" class="text-decoration-none">
+            <a href="{{route('front.travel.cab.index')}}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 text-center h-100">
                     <div class="card-body">
                         <img src="{{ asset('front/images/car-booking.jpg') }}" class="img-fluid rounded mb-2" alt="Car">
@@ -48,7 +48,7 @@
         </div>
 
         <div class="col-6 col-md-3">
-            <a href="#" class="text-decoration-none">
+            <a href="{{route('front.travel.hotel.index')}}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 text-center h-100">
                     <div class="card-body">
                         <img src="{{ asset('front/images/hotel-booking.jpg') }}" class="img-fluid rounded mb-2" alt="Accommodation">

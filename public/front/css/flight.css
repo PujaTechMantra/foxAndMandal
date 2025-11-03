@@ -68,6 +68,7 @@
     border: none;
     background: transparent;
     font-weight: 600;
+    width:200px;
     color: #4b1d0d;
     transition: 0.3s;
 }

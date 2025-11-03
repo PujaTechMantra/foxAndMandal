@@ -28,9 +28,9 @@ class FlightController extends Controller
             'trip_type' => 'required|integer|in:1,2',
             'from' => 'required|string|max:255',
             'to' => 'required|string|max:255',
-            'departure_date' => 'required|date',
+            'departure_date' => 'required',
             'departure-time' => 'required|string',
-            'return_date' => 'nullable|date',
+            'return_date' => 'nullable',
             'return-time' => 'nullable|string',
             'bill' => 'required|integer|in:1,2,3',
             'traveller' => 'required|array|min:1',
@@ -39,7 +39,7 @@ class FlightController extends Controller
             'traveller.*.food_preference' => 'nullable|string|max:255',
         ]);
         if ($request->trip_type == 2) {
-            $rules['return_date'] = 'required|date|after_or_equal:departure_date';
+            $rules['return_date'] = 'required|after_or_equal:departure_date';
             $rules['return-time'] = 'required|string';
         }
 
@@ -107,7 +107,7 @@ class FlightController extends Controller
         }
     }
 
-   public function searchAirports(Request $request)
+    public function searchAirports(Request $request)
     {
         $term = $request->get('term', '');
 
@@ -203,15 +203,15 @@ class FlightController extends Controller
             'cancellation_remarks' => $request->remarks ?? 'No remarks provided',
         ]);
 
-        DB::table('edit_logs')->insert([
-            'table_name' => 'flight_bookings',
-            'record_id' => $orderData->id,
-            'field' => 'status',
-            'old_value' => $oldValue,
-            'new_value' => 4,
-            'updated_by' => $orderData->user_id,
-            'created_at' => now(),
-        ]);
+        // DB::table('edit_logs')->insert([
+        //     'table_name' => 'flight_bookings',
+        //     'record_id' => $orderData->id,
+        //     'field' => 'status',
+        //     'old_value' => $oldValue,
+        //     'new_value' => 4,
+        //     'updated_by' => $orderData->user_id,
+        //     'created_at' => now(),
+        // ]);
 
         return redirect()
             ->route('front.travel.flight.history')
@@ -255,9 +255,9 @@ class FlightController extends Controller
             'order_no' => 'required|exists:flight_bookings,order_no',
             'from' => 'required|string|max:255',
             'to' => 'required|string|max:255',
-            'departure_date' => 'required|date',
+            'departure_date' => 'required',
             'departure-time' => 'required|string',
-            'return_date' => 'nullable|date',
+            'return_date' => 'nullable',
             'return-time' => 'nullable|string',
             'bill' => 'required|integer|in:1,2,3',
             'traveller' => 'required|array|min:1',

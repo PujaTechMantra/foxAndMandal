@@ -1,6 +1,6 @@
 @extends('front.layouts.app')
 
-@section('title', 'Edit Train Booking')
+@section('title', 'Edit Train/Bus Booking')
 
 @section('content')
 <div class="container py-5">
@@ -11,7 +11,7 @@
                class="back-btn d-flex align-items-center justify-content-center me-3 text-decoration-none">
                 <i class="bi bi-arrow-left"></i>
             </a>
-            <h3 class="mb-0 fw-semibold text-dark">Edit Train Booking</h3>
+            <h3 class="mb-0 fw-semibold text-dark">Edit Train/Bus Booking</h3>
         </div>
     </div>
 
@@ -49,7 +49,6 @@
             </div>
 
             @php
-                $today = now()->format('Y-m-d'); 
                 $times = [
                     '12 am - 8 am' => 'Early Morning',
                     '8 am - 12 pm' => 'Morning',
@@ -62,8 +61,8 @@
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Date of Departure</label>
-                    <input type="date" class="form-control" name="departure_date"
-                           value="{{ old('departure_date', $booking->travel_date) }}" min="{{ $today }}">
+                    <input type="text" class="form-control" name="departure_date"
+                           value="{{ old('departure_date', $booking->departure_date ? \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y') : '') }}">
                 </div>
 
                 <div class="col-md-6 mb-4">
@@ -84,8 +83,8 @@
             <div class="row {{ old('trip_type', $booking->trip_type) == 2 ? '' : 'd-none' }}" id="return-div">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Date of Return</label>
-                    <input type="date" class="form-control" name="return_date"
-                           value="{{ old('return_date', $booking->return_date) }}" min="{{ $today }}">
+                    <input type="text" class="form-control" name="return_date"
+                         value="{{ old('return_date', $booking->return_date ? \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y') : '') }}">
                 </div>
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Time of Return</label>
@@ -149,7 +148,7 @@
 
             <div class="mb-5" id="matter-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'block' : 'none' }};">
                 <label class="form-label">Enter Matter Code</label>
-                <input class="form-control" name="matter_code" type="text" 
+                <input class="form-control" name="matter_code" type="text" id="matterCodeInput"
                        value="{{ old('matter_code', optional($booking->matter)->matter_code) }}" placeholder="Type at least 3 characters to search..">
             </div>
 
@@ -340,6 +339,27 @@ $(document).ready(function () {
     $('#trainBookingForm').on('submit', function () {
         $('#travellerDataInput').val(JSON.stringify(personList));
     });
+
+     $("#matterCodeInput").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "{{ route('front.travel.matter-code.suggest') }}",
+                    data: { query: request.term },
+                    success: function(data) {
+                        response($.map(data, function(item) {
+                            return {
+                                label: item.matter_code + ' (' + item.client_name + ')',
+                                value: item.matter_code
+                            };
+                        }));
+                    }
+                });
+            },
+            minLength: 1,
+            select: function(event, ui) {
+                $("#matterCodeInput").val(ui.item.value);
+            }
+        });
 });
 </script>
 @endsection

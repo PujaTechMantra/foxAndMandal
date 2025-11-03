@@ -1,25 +1,25 @@
 @extends('front.layouts.app')
 
-@section('title', 'Edit Flight Booking')
+@section('title', 'Edit Cab Booking')
 
 @section('content')
 <div class="container py-5">
     <!-- Header -->
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap">
         <div class="d-flex align-items-center">
-            <a href="{{ route('front.travel.flight.history') }}" 
+            <a href="{{ route('front.travel.cab.history') }}" 
                class="back-btn d-flex align-items-center justify-content-center me-3 text-decoration-none">
                 <i class="bi bi-arrow-left"></i>
             </a>
-            <h3 class="mb-0 fw-semibold text-dark">Edit Flight Booking</h3>
+            <h3 class="mb-0 fw-semibold text-dark">Edit Cab Booking</h3>
         </div>
     </div>
 
     <!-- Edit Form -->
     <div class="booking-wrapper mx-auto p-5">
-        <form class="booking-form" id="flightBookingForm" 
+        <form class="booking-form" id="cabBookingForm" 
               method="POST" 
-              action="{{ route('front.travel.flight.update', $booking->order_no) }}">
+              action="{{ route('front.travel.cab.update', $booking->order_no) }}">
             @csrf
 
             <input type="hidden" name="order_no" value="{{ $booking->order_no }}">
@@ -31,74 +31,40 @@
                 <div class="col-md-6 mb-4">
                     <label class="form-label">From</label>
                     <input type="text" name="from" class="form-control" 
-                           value="{{ old('from', $booking->from) }}" placeholder="Enter source">
+                        value="{{ old('from', $booking->from_location) }}" placeholder="Enter source">
                 </div>
 
                 <div class="col-md-6 mb-4">
                     <label class="form-label">To</label>
                     <input type="text" name="to" class="form-control"
-                           value="{{ old('to', $booking->to) }}" placeholder="Enter destination">
+                        value="{{ old('to', $booking->to_location) }}" placeholder="Enter destination">
                 </div>
             </div>
 
-            <div class="text-center mb-4">
-                <div class="trip-type d-inline-flex overflow-hidden">
-                    <button type="button" class="trip-btn {{ old('trip_type', $booking->trip_type) == 1 ? 'active' : '' }}" id="oneWayBtn">One Way</button>
-                    <button type="button" class="trip-btn {{ old('trip_type', $booking->trip_type) == 2 ? 'active' : '' }}" id="roundTripBtn">Round Trip</button>
-                </div>
-            </div>
-
-            @php
-                $times = [
-                    '12 am - 8 am' => 'Early Morning',
-                    '8 am - 12 pm' => 'Morning',
-                    '12 pm - 4 pm' => 'Mid-day',
-                    '4 pm - 8 pm' => 'Evening',
-                    '8 pm - 12 am' => 'Night',
-                ];
-            @endphp
-
-            <div class="row">
+             <div class="row align-items-end">
                 <div class="col-md-6 mb-4">
-                    <label class="form-label">Departure Date</label>
-                    <input type="text" class="form-control" name="departure_date"
-                         value="{{ old('departure_date', $booking->departure_date ? \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y') : '') }}">
-                </div>
-
-                <div class="col-md-6 mb-4">
-                    <label class="form-label">Departure Time</label>
-                    <div class="radio-group">
-                        @foreach($times as $value => $label)
-                            <label>
-                                <input type="radio" name="departure-time" value="{{ $value }}"
-                                    {{ old('departure-time', $booking->arrival_time) == $value ? 'checked' : '' }}>
-                                {{ $label }} <span>{{ $value }}</span>
-                            </label>
-                        @endforeach
+                    <label class="form-label">Travel Date & Pickup Time</label>
+                    <div class="d-flex gap-2">
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="departure_date" 
+                            name="departure_date"
+                            placeholder="dd-mm-yyyy"
+                            value="{{ old('departure_date', $booking->pickup_date ? \Carbon\Carbon::parse($booking->pickup_date)->format('d-m-Y') : '') }}"
+                        >
+                        <input 
+                            type="time" 
+                            class="form-control" 
+                            name="departure_time"
+                            id="departure_time"
+                            value="{{ old('departure_time', $booking->pickup_time ?? now()->format('H:i')) }}"
+                           
+                        >
                     </div>
                 </div>
             </div>
 
-            <!-- Return -->
-            <div class="row {{ old('trip_type', $booking->trip_type) == 2 ? '' : 'd-none' }}" id="return-div">
-                <div class="col-md-6 mb-4">
-                    <label class="form-label">Return Date</label>
-                    <input type="text" class="form-control" name="return_date"
-                           value="{{ old('return_date', $booking->return_date ? \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y') : '') }}">
-                </div>
-                <div class="col-md-6 mb-4">
-                    <label class="form-label">Return Time</label>
-                    <div class="radio-group">
-                        @foreach($times as $value => $label)
-                            <label>
-                                <input type="radio" name="return-time" value="{{ $value }}"
-                                    {{ old('return-time', $booking->return_time) == $value ? 'checked' : '' }}>
-                                {{ $label }} <span>{{ $value }}</span>
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
 
             <!-- Travellers -->
             <div class="mb-4" id="personCardWrapper" style="display: none;">
@@ -121,7 +87,7 @@
 
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Description</label>
-                    <textarea class="form-control" name="description" rows="2" placeholder="Please enter flight details/other preference if any.">{{ old('description', $booking->description) }}</textarea>
+                    <textarea class="form-control" name="description" rows="2" placeholder="Please enter cab details/other preference if any.">{{ old('description', $booking->description) }}</textarea>
                 </div>
             </div>
 
@@ -141,7 +107,7 @@
 
             <div class="mb-5" id="matter-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'block' : 'none' }};">
                 <label class="form-label">Enter Matter Code</label>
-                <input class="form-control" name="matter_code" type="text" 
+                <input class="form-control" name="matter_code" type="text" id="matterCodeInput"
                        value="{{ old('matter_code', optional($booking->matter)->matter_code) }}" placeholder="Type at least 3 characters to search..">
             </div>
 
@@ -179,26 +145,6 @@
               <div class="invalid-feedback">Please enter name.</div>
             </div>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Seat Preference</label>
-            <select class="form-select" name="seatPref">
-              <option value="">Select</option>
-              <option value="Window">Window</option>
-              <option value="Aisle">Aisle</option>
-              <option value="Emergency Exit">Emergency Exit</option>
-            </select>
-            <div class="invalid-feedback">Please choose seat preference.</div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Food Preference</label>
-            <select class="form-select" name="foodPref">
-              <option value="">Select</option>
-              <option value="Veg">Veg</option>
-              <option value="Non-Veg">Non-Veg</option>
-              <option value="None">None</option>
-            </select>
-            <div class="invalid-feedback">Please choose food preference.</div>
-          </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -214,22 +160,7 @@
 <script>
 $(document).ready(function () {
     let personList = @json($booking->traveller ?? []);
-
-    // Trip type toggle
-    $('#oneWayBtn').click(function () {
-        $(this).addClass('active');
-        $('#roundTripBtn').removeClass('active');
-        $('#return-div').addClass('d-none');
-        $('#tripTypeInput').val(1);
-    });
-
-    $('#roundTripBtn').click(function () {
-        $(this).addClass('active');
-        $('#oneWayBtn').removeClass('active');
-        $('#return-div').removeClass('d-none');
-        $('#tripTypeInput').val(2);
-    });
-
+  
     // Bill to toggle
     $('input[name="bill"]').on('change', function () {
         if ($(this).val() === '3') {
@@ -239,31 +170,6 @@ $(document).ready(function () {
             $('#matter-div').hide();
             $('#remarks-div').show();
         }
-    });
-
-    // Autocomplete (same as add)
-    $(function () {
-        $('input[name="from"]').autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "{{ route('front.travel.flight.search') }}",
-                    data: { term: request.term },
-                    success: function (data) { response(data); }
-                });
-            },
-            minLength: 1,
-        });
-
-        $('input[name="to"]').autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "{{ route('front.travel.flight.search') }}",
-                    data: { term: request.term },
-                    success: function (data) { response(data); }
-                });
-            },
-            minLength: 1,
-        });
     });
 
     // Render existing travellers
@@ -284,10 +190,6 @@ $(document).ready(function () {
                 <div class="d-flex justify-content-between align-items-center flex-wrap py-2">
                     <div>
                         <h6 class="mb-1 fw-semibold"> ${p.name ?? ''}</h6>
-                        <p class="mb-0 text-muted small">
-                            <strong>Seat:</strong> ${p.seat_preference ?? 'N/A'} &nbsp;|&nbsp;
-                            <strong>Food:</strong> ${p.food_preference ?? 'N/A'}
-                        </p>
                     </div>
                     <button class="btn btn-sm btn-outline-danger rounded-circle delete-person" data-id="${p.id ?? Date.now()}">
                         <i class="bi bi-trash"></i>
@@ -310,30 +212,46 @@ $(document).ready(function () {
         $('#personForm .form-control, #personForm .form-select').removeClass('is-invalid');
         let title = $('#addPersonModal select[name="title"]').val();
         let name = $('#addPersonModal input[name="name"]').val().trim();
-        let seat_preference = $('#addPersonModal select[name="seatPref"]').val();
-        let food_preference = $('#addPersonModal select[name="foodPref"]').val();
 
-        let valid = name && seat_preference && food_preference;
+        let valid = name;
         if (!valid) {
             if (!name) $('#addPersonModal input[name="name"]').addClass('is-invalid');
-            if (!seat_preference) $('#addPersonModal select[name="seatPref"]').addClass('is-invalid');
-            if (!food_preference) $('#addPersonModal select[name="foodPref"]').addClass('is-invalid');
             return;
-        }
+            }
 
-        personList.push({ id: Date.now(), name : `${title} ${name}`, seat_preference, food_preference });
+        personList.push({ id: Date.now(), name : `${title} ${name}`});
         renderPersons();
         $('#addPersonModal').modal('hide');
         $('#personForm')[0].reset();
     });
 
     // On submit — pass JSON
-    $('#flightBookingForm').on('submit', function () {
+    $('#cabBookingForm').on('submit', function () {
         $('#travellerDataInput').val(JSON.stringify(personList));
     });
 
-});
+    $("#matterCodeInput").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "{{ route('front.travel.matter-code.suggest') }}",
+                data: { query: request.term },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item.matter_code + ' (' + item.client_name + ')',
+                            value: item.matter_code
+                        };
+                    }));
+                }
+            });
+        },
+        minLength: 1,
+        select: function(event, ui) {
+            $("#matterCodeInput").val(ui.item.value);
+        }
+    });
 
+});
    
 </script>
 @endsection

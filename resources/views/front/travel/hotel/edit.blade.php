@@ -37,7 +37,7 @@
                 <div class="col-md-6 mb-4" id="guestHouseDiv">
                     <label class="form-label">Guest Houses</label>
                     <select name="property_id" class="form-control">
-                        <option>Select Location</option>
+                        <option value="">Select Location</option>
                         @foreach($properties as $property)
                             <option value="{{ $property->id }}" 
                                 {{ old('property_id', $booking->property_id) == $property->id ? 'selected' : '' }}>

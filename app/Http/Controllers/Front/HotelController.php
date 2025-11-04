@@ -172,7 +172,7 @@ class HotelController extends Controller
         ]);
 
         return redirect()
-            ->route('front.travel.dashboard')
+            ->route('front.travel.hotel.history')
             ->with('success', 'Booking cancelled successfully.');
     }
 
@@ -203,12 +203,12 @@ class HotelController extends Controller
         $currentHour = (int)$now->format('H');
 
         if ($currentHour >= 19 || $currentHour < 10) {
-            return redirect()->back()->with('error', 'You can only cancel bookings during business hours (10 AM - 7 PM).');
+            return redirect()->back()->with('error', 'You can only edit bookings during business hours (10 AM - 7 PM).');
         }
 
         $checkin = Carbon::parse($booking->checkin_date);
         if ($now->greaterThan($checkin->copy()->subHours(6))) {
-            return redirect()->back()->with('error', 'You must cancel at least 6 hours before check-in.');
+            return redirect()->back()->with('error', 'You must edit at least 6 hours before check-in.');
         }
         $matterId = null;
         if ($request->bill == 3 && $request->filled('matter_code')) {
@@ -240,7 +240,7 @@ class HotelController extends Controller
 
         $booking->update($newData);
 
-        return redirect()->back()->with('success', 'Hotel booking updated successfully.');
+        return redirect()->route('front.travel.hotel.history')->with('success', 'Hotel booking updated successfully.');
     }
 
 }

@@ -114,11 +114,38 @@
         dateFormat: "d-m-Y",
         minDate: "today"
     });
+     flatpickr("#return_date", {
+        dateFormat: "d-m-Y",
+        minDate: "today"
+    });
     flatpickr(".datetimepicker", {
         enableTime: true,
         dateFormat: "d-m-Y H:i", 
         time_24hr: true
     });
+
+    $("#matterCodeInput").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "{{ route('front.travel.matter-code.suggest') }}",
+                    data: { query: request.term },
+                    success: function(data) {
+                        response($.map(data, function(item) {
+                            return {
+                                // label: item.matter_code + ' (' + item.client_name + ')',
+                                label: item.matter_code,
+
+                                value: item.matter_code
+                            };
+                        }));
+                    }
+                });
+            },
+            minLength: 1,
+            select: function(event, ui) {
+                $("#matterCodeInput").val(ui.item.value);
+            }
+        });
 </script>
     @yield('scripts')
 </body>

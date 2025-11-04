@@ -41,7 +41,7 @@
                         <p class="mb-2"><strong>Check-In Date & Time:</strong> {{ \Carbon\Carbon::parse($booking->checkin_date)->format('d-m-Y H:i') }}</p>
                         <p class="mb-2"><strong>Check-Out Date & Time:</strong> {{ \Carbon\Carbon::parse($booking->checkout_date)->format('d-m-Y H:i') }}</p>
                         <p class="mb-2"><strong>Guest Type:</strong> {{ $booking->guest_type }}</p>
-                        <p class="mb-2"><strong>Food Preference:</strong> {{ $booking->description ?? 'N/A' }}</p>
+                        <p class="mb-2"><strong>Food Preference:</strong> {{ $booking->food_preference ?? 'N/A' }}</p>
                         <p class="mb-2"><strong>Purpose/Description:</strong> {{ $booking->purpose ?? 'N/A' }}</p>
                     </div>
 

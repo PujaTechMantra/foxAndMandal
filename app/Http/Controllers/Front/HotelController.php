@@ -27,12 +27,18 @@ class HotelController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
-            'property_id' => 'nullable|exists:properties,id',
-            'departure_date' => 'required',
-            'return_date' => 'required|after:departure_date',
+            'hotel_type' => 'required|integer|in:1,2',
+            'property_id' => 'required_if:hotel_type,1|exists:properties,id|nullable',
+            'hotel_preference' => 'required_if:hotel_type,2|string|nullable',
+            'departure_date' => 'required|date',
+            'return_date' => 'required|date|after:departure_date',
             'guest_number' => 'required|integer|min:1',
             'bill' => 'required|integer|in:1,2,3',
+            'guest_type' => 'required',
+            'matter_code' => 'required_if:bill,3|nullable|string|max:255',
+            'remarks' => 'required_if:bill,1,2|nullable|string',
         ]);
+
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -50,12 +56,11 @@ class HotelController extends Controller
 
         // Matter code logic
         $matterId = null;
-        if ($request->matter_code) {
-            $user = User::find($validatedData['user_id']);
-            $clientName = $user->name ?? 'Unknown';
+        if ($request->bill == 3 && $request->filled('matter_code')) {
+            $user = auth()->guard('front_user')->user();
             $matter = MatterCode::firstOrCreate(
                 ['matter_code' => $request->matter_code],
-                ['client_name' => $clientName]
+                ['client_name' => $user->name ?? 'Unknown']
             );
             $matterId = $matter->id;
         }
@@ -72,12 +77,13 @@ class HotelController extends Controller
                             ? implode(',', $request->guest_type)
                             : $request->guest_type,
             'hotel_type' => $request->hotel_type,
-            'text' => $request->text,
+            'text' => $request->hotel_preference,
             'seat_preference' => $request->seat_preference,
             'food_preference' => $request->food_preference,
             'purpose' => $request->purpose,
             'description' => $request->description,
             'sequence_no' => $new_sequence_no,
+            'bill_to_remarks' => $validatedData['remarks'],
             'order_no' => $uniqueNo,
         ]);
 
@@ -86,7 +92,7 @@ class HotelController extends Controller
         }
 
         // Email log
-        $user = User::find($validatedData['user_id']);
+        // $user = User::find($validatedData['user_id']);
         // MailActivity::create([
         //     'email' => $user->email,
         //     'type' => 'hotel-booking-information-sent',
@@ -151,48 +157,72 @@ class HotelController extends Controller
             ->with('success', 'Booking cancelled successfully.');
     }
 
-   public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $booking = HotelBooking::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'hotel_type' => 'required|integer|in:1,2',
+            'property_id' => 'required_if:hotel_type,1|exists:properties,id|nullable',
+            'hotel_preference' => 'required_if:hotel_type,2|string|nullable',
+            'departure_date' => 'required|date',
+            'return_date' => 'required|date|after:departure_date',
+            'guest_number' => 'required|integer|min:1',
+            'bill' => 'required|integer|in:1,2,3',
+            'guest_type' => 'required',
+            'matter_code' => 'required_if:bill,3|nullable|string|max:255',
+            'remarks' => 'required_if:bill,1,2|nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $validatedData = $validator->validated();
+
+        $booking = HotelBooking::where('order_no', $request->order_no)->firstOrFail();
 
         $now = Carbon::now();
         $currentHour = (int)$now->format('H');
 
-        // Restrict updates outside business hours
         if ($currentHour >= 19 || $currentHour < 10) {
-            return redirect()->back()->with('error', 'You can only modify bookings during business hours (10 AM - 7 PM).');
+            return redirect()->back()->with('error', 'You can only cancel bookings during business hours (10 AM - 7 PM).');
         }
 
-        // Prevent updates within 6 hours of check-in
         $checkin = Carbon::parse($booking->checkin_date);
         if ($now->greaterThan($checkin->copy()->subHours(6))) {
-            return redirect()->back()->with('error', 'You must make changes at least 6 hours before check-in.');
+            return redirect()->back()->with('error', 'You must cancel at least 6 hours before check-in.');
+        }
+        $matterId = null;
+        if ($request->bill == 3 && $request->filled('matter_code')) {
+            $user = auth()->guard('front_user')->user();
+            $matter = MatterCode::firstOrCreate(
+                ['matter_code' => $request->matter_code],
+                ['client_name' => $user->name ?? 'Unknown']
+            );
+            $matterId = $matter->id;
         }
 
         $newData = [
-            'bill_to' => $request->bill_to,
-            'room_id' => $request->room_id,
-            'property_id' => $request->property_id,
-            'guest_type' => $request->guest_type,
-            'checkin_date' => $request->departure_date,
-            'checkout_date' => $request->return_date,
-            'matter_code' => $request->matter_code,
-            'room_number' => $request->room_number,
-            'guest_number' => $request->guest_number,
+            'property_id' => $validatedData['property_id'],
+            'checkin_date' => $validatedData['departure_date'],
+            'checkout_date' => $validatedData['return_date'],
+            'guest_number' => $validatedData['guest_number'],
+            'bill_to' => $validatedData['bill'],
+            'matter_code' => $matterId,
+            'guest_type' => is_array($request->guest_type)
+                            ? implode(',', $request->guest_type)
+                            : $request->guest_type,
             'hotel_type' => $request->hotel_type,
-            'text' => $request->text,
-            'seat_preference' => $request->seat_preference,
             'food_preference' => $request->food_preference,
+            'text' => $request->hotel_preference,
             'purpose' => $request->purpose,
             'description' => $request->description,
-            'updated_at' => now(),
+            'bill_to_remarks' => $validatedData['remarks'],
         ];
 
         $booking->update($newData);
 
         return redirect()->back()->with('success', 'Hotel booking updated successfully.');
     }
-
 
 }
 

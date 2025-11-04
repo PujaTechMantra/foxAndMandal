@@ -240,7 +240,7 @@ Route::prefix('front')->name('front.')->group(function () {
             Route::get('/flight/history', [FlightController::class, 'history'])->name('flight.history');
             Route::post('/flight/cancelBooking',[FlightController::class,'cancelBooking'])->name('flight.cancel');
             Route::get('/flight/{id}/edit',[FlightController::class,'edit'])->name('flight.edit');
-            Route::post('/flight/{id}/update',[FlightController::class,'update'])->name('flight.update');
+            Route::post('/flight/update',[FlightController::class,'update'])->name('flight.update');
         
 
             Route::get('/train', [TrainController::class, 'index'])->name('train.index');
@@ -249,21 +249,21 @@ Route::prefix('front')->name('front.')->group(function () {
             Route::get('/train/history', [TrainController::class, 'history'])->name('train.history');
             Route::post('/train/cancelBooking',[TrainController::class,'cancelBooking'])->name('train.cancel');
             Route::get('/train/{id}/edit',[TrainController::class,'edit'])->name('train.edit');
-            Route::post('/train/{id}/update',[TrainController::class,'update'])->name('train.update');
+            Route::post('/train/update',[TrainController::class,'update'])->name('train.update');
 
             Route::get('/cab', [CabController::class, 'index'])->name('cab.index');
             Route::post('/cab/store', [CabController::class, 'store'])->name('cab.store');
             Route::get('/cab/history', [CabController::class, 'history'])->name('cab.history');
             Route::post('/cab/cancelBooking',[CabController::class,'cancelBooking'])->name('cab.cancel');
             Route::get('/cab/{id}/edit',[CabController::class,'edit'])->name('cab.edit');
-            Route::post('/cab/{id}/update',[CabController::class,'update'])->name('cab.update');
+            Route::post('/cab/update',[CabController::class,'update'])->name('cab.update');
 
             Route::get('/hotel', [HotelController::class, 'index'])->name('hotel.index');
             Route::post('/hotel/store', [HotelController::class, 'store'])->name('hotel.store');
             Route::get('/hotel/history', [HotelController::class, 'history'])->name('hotel.history');
             Route::post('/hotel/cancelBooking',[HotelController::class,'cancelBooking'])->name('hotel.cancel');
             Route::get('/hotel/{id}/edit',[HotelController::class,'edit'])->name('hotel.edit');
-            Route::post('/hotel/{id}/update',[HotelController::class,'update'])->name('hotel.update');
+            Route::post('/hotel/update',[HotelController::class,'update'])->name('hotel.update');
 
             Route::get('/matter-code/search',[MatterCodeController::class,'suggestMatterCode'])->name('matter-code.suggest');
         });

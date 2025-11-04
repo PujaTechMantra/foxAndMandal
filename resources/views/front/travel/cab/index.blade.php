@@ -66,7 +66,6 @@
                             name="departure_time"
                             id="departure_time"
                             value="{{ old('departure_time', now()->format('H:i')) }}"
-                            min="{{ now()->format('H:i') }}"
                         >
                     </div>
                 </div>
@@ -259,26 +258,6 @@ $(document).ready(function () {
         $('#travellerDataInput').val(JSON.stringify(personList));
     });
 
-        $("#matterCodeInput").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "{{ route('front.travel.matter-code.suggest') }}",
-                    data: { query: request.term },
-                    success: function(data) {
-                        response($.map(data, function(item) {
-                            return {
-                                label: item.matter_code + ' (' + item.client_name + ')',
-                                value: item.matter_code
-                            };
-                        }));
-                    }
-                });
-            },
-            minLength: 1,
-            select: function(event, ui) {
-                $("#matterCodeInput").val(ui.item.value);
-            }
-        });
 });
 </script>
 @endsection

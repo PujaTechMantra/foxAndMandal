@@ -95,7 +95,7 @@
             <div class="row" id="return-div" style="display: {{ old('trip_type', 1) == 2 ? 'block' : 'none' }};">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Date of Return</label>
-                    <input type="text" class="form-control" name="return_date" value="{{ old('return_date', now()->format('d-m-Y')) }}">
+                    <input type="text" class="form-control" name="return_date" id="return_date" value="{{ old('return_date', now()->format('d-m-Y')) }}">
                 </div>
 
                 <div class="col-md-6 mb-4">
@@ -392,26 +392,7 @@ $(document).ready(function () {
         $('#travellerDataInput').val(JSON.stringify(personList));
     });
 
-      $("#matterCodeInput").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "{{ route('front.travel.matter-code.suggest') }}",
-                    data: { query: request.term },
-                    success: function(data) {
-                        response($.map(data, function(item) {
-                            return {
-                                label: item.matter_code + ' (' + item.client_name + ')',
-                                value: item.matter_code
-                            };
-                        }));
-                    }
-                });
-            },
-            minLength: 1,
-            select: function(event, ui) {
-                $("#matterCodeInput").val(ui.item.value);
-            }
-        });
+      
 });
 </script>
 @endsection

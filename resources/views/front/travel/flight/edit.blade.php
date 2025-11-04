@@ -19,7 +19,7 @@
     <div class="booking-wrapper mx-auto p-5">
         <form class="booking-form" id="flightBookingForm" 
               method="POST" 
-              action="{{ route('front.travel.flight.update', $booking->order_no) }}">
+              action="{{ route('front.travel.flight.update') }}">
             @csrf
 
             <input type="hidden" name="order_no" value="{{ $booking->order_no }}">
@@ -61,7 +61,7 @@
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Departure Date</label>
-                    <input type="text" class="form-control" name="departure_date"
+                    <input type="text" class="form-control" name="departure_date" id="departure_date"
                          value="{{ old('departure_date', $booking->departure_date ? \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y') : '') }}">
                 </div>
 
@@ -83,8 +83,8 @@
             <div class="row {{ old('trip_type', $booking->trip_type) == 2 ? '' : 'd-none' }}" id="return-div">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Return Date</label>
-                    <input type="text" class="form-control" name="return_date"
-                           value="{{ old('return_date', $booking->return_date ? \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y') : '') }}">
+                    <input type="text" class="form-control" name="return_date" id="return_date"
+                           value="{{ old('return_date', $booking->return_date ? \Carbon\Carbon::parse($booking->return_date)->format('d-m-Y') : '') }}">
                 </div>
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Return Time</label>
@@ -101,16 +101,21 @@
             </div>
 
             <!-- Travellers -->
-            <div class="mb-4" id="personCardWrapper" style="display: none;">
-                <div class="card person-card shadow-sm border-0">
-                    <div class="card-body" id="personCardBody"></div>
-                </div>
-            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label">Travellers</label>
+                    <div class="mb-4" id="personCardWrapper" style="display: none;">
+                        <div class="card person-card shadow-sm border-0">
+                            <div class="card-body" id="personCardBody"></div>
+                        </div>
+                    </div>
 
-            <div class="mb-4">
-                <button type="button" class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#addPersonModal">
-                    + Add Person
-                </button>
+                    <div class="mb-4">
+                        <button type="button" class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#addPersonModal">
+                            + Add Person
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="row">
@@ -141,7 +146,7 @@
 
             <div class="mb-5" id="matter-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'block' : 'none' }};">
                 <label class="form-label">Enter Matter Code</label>
-                <input class="form-control" name="matter_code" type="text" 
+                <input class="form-control" name="matter_code" type="text" id="matterCodeInput"
                        value="{{ old('matter_code', optional($booking->matter)->matter_code) }}" placeholder="Type at least 3 characters to search..">
             </div>
 

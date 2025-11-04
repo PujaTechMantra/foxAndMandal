@@ -19,7 +19,7 @@
     <div class="booking-wrapper mx-auto p-5">
         <form class="booking-form" id="cabBookingForm" 
               method="POST" 
-              action="{{ route('front.travel.cab.update', $booking->order_no) }}">
+              action="{{ route('front.travel.cab.update') }}">
             @csrf
 
             <input type="hidden" name="order_no" value="{{ $booking->order_no }}">
@@ -67,16 +67,21 @@
 
 
             <!-- Travellers -->
-            <div class="mb-4" id="personCardWrapper" style="display: none;">
-                <div class="card person-card shadow-sm border-0">
-                    <div class="card-body" id="personCardBody"></div>
-                </div>
-            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label">Travellers</label>
+                    <div class="mb-4" id="personCardWrapper" style="display: none;">
+                        <div class="card person-card shadow-sm border-0">
+                            <div class="card-body" id="personCardBody"></div>
+                        </div>
+                    </div>
 
-            <div class="mb-4">
-                <button type="button" class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#addPersonModal">
-                    + Add Person
-                </button>
+                    <div class="mb-4">
+                        <button type="button" class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#addPersonModal">
+                            + Add Person
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="row">
@@ -228,27 +233,6 @@ $(document).ready(function () {
     // On submit — pass JSON
     $('#cabBookingForm').on('submit', function () {
         $('#travellerDataInput').val(JSON.stringify(personList));
-    });
-
-    $("#matterCodeInput").autocomplete({
-        source: function(request, response) {
-            $.ajax({
-                url: "{{ route('front.travel.matter-code.suggest') }}",
-                data: { query: request.term },
-                success: function(data) {
-                    response($.map(data, function(item) {
-                        return {
-                            label: item.matter_code + ' (' + item.client_name + ')',
-                            value: item.matter_code
-                        };
-                    }));
-                }
-            });
-        },
-        minLength: 1,
-        select: function(event, ui) {
-            $("#matterCodeInput").val(ui.item.value);
-        }
     });
 
 });

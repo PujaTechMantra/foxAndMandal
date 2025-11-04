@@ -4,11 +4,13 @@
 
 @section('content')
 <div class="row g-4">
+            <!-- ['title' => 'LIBRARY', 'image' => 'books-bg.png', 'url' => route('front.library.dashboard')], -->
+
+            <!-- ['title' => 'CAVITY', 'image' => 'vault-bg.png', 'url' => '#'], -->
+
     @php
         $modules = [
-            ['title' => 'LIBRARY', 'image' => 'books-bg.png', 'url' => route('front.library.dashboard')],
             ['title' => 'TRAVEL', 'image' => 'travel-bg.png', 'url' => route('front.travel.dashboard')],
-            ['title' => 'CAVITY', 'image' => 'vault-bg.png', 'url' => '#'],
             ['title' => 'ERP', 'image' => 'erp.png', 'url' => '#'],
             ['title' => 'CMS / PMS', 'image' => 'cms.png', 'url' => '#'],
             ['title' => 'ILDMS', 'image' => 'ildms.png', 'url' => '#'],

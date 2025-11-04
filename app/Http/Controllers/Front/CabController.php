@@ -32,13 +32,13 @@ class CabController extends Controller
             'user_id' => 'required|exists:users,id',
             'from' => 'required|string|max:255',
             'to' => 'required|string|max:255',
-            'departure_date' => 'required|date',
-            'departure_time' => 'required|string',
+            'departure_date' => 'required',
+            'departure_time' => 'required',
             'bill' => 'required|integer|in:1,2,3',
+            'matter_code' => 'required_if:bill,3|nullable|string|max:255',
+            'remarks' => 'required_if:bill,1,2|nullable|string',
             'traveller' => 'required|array|min:1',
             'traveller.*.name' => 'required|string|max:255',
-            'traveller.*.seat_preference' => 'nullable|string|max:255',
-            'traveller.*.food_preference' => 'nullable|string|max:255',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -87,6 +87,7 @@ class CabController extends Controller
                 'description' => $request->description,
                 'sequence_no' => $newSeq,
                 'order_no' => $uniqueNo,
+                'bill_to_remarks' => $request->remarks
             ]);
 
             // Redirect with success
@@ -225,6 +226,8 @@ class CabController extends Controller
             'traveller.*.name' => 'required|string|max:255',
             'purpose' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:1000',
+            'matter_code' => 'required_if:bill,3|nullable|string|max:255',
+            'remarks' => 'required_if:bill,1,2|nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -235,9 +238,9 @@ class CabController extends Controller
             $order = CabBooking::where('order_no', $request->order_no)->firstOrFail();
 
             $now = Carbon::now();
-            $pickupDate = Carbon::createFromFormat('d-m-Y', $request->departure_date);
-            $pickupDateTime = Carbon::createFromFormat('d-m-Y H:i', "{$request->departure_date} {$request->departure_time}");
-
+            
+            $pickupDate = Carbon::createFromFormat('Y-m-d', $order->pickup_date);
+            $pickupDateTime = Carbon::createFromFormat('Y-m-d H:i', "{$order->pickup_date} {$order->pickup_time}");
             // Business logic checks
             if ($pickupDate->isBefore(Carbon::today())) {
                 return back()->with('error', 'Booking cannot be edited. Pickup date is before today.');
@@ -252,6 +255,20 @@ class CabController extends Controller
                 return back()->with('error', 'Edits must be made at least 6 hours before the pickup time.');
             }
 
+            $matterId = null;
+            if ((int)$request->bill === 3 && !empty($request->matter_code)) {
+                $user = User::find($request->user_id);
+                $clientName = $user->name ?? 'Unknown';
+
+                $matter = MatterCode::firstOrCreate(
+                    ['matter_code' => $request->matter_code],
+                    ['client_name' => $clientName]
+                );
+
+                $matterId = $matter->id;
+            }
+
+
             // Prepare updated data
             $newData = [
                 'bill_to' => $request->bill,
@@ -259,11 +276,11 @@ class CabController extends Controller
                 'to_location' => $request->to,
                 'pickup_date' => $pickupDate->format('Y-m-d'),
                 'pickup_time' => $request->departure_time,
-                'matter_code' => $request->matter_code,
+                'matter_code' => $request->matterId,
                 'traveller' => collect($request->traveller)->pluck('name')->implode(','),
                 'purpose' => $request->purpose,
                 'description' => $request->description,
-                'updated_at' => now(),
+                'bill_to_remarks' => $request->remarks
             ];
 
             // Detect and log changes

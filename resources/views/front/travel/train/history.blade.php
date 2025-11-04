@@ -41,7 +41,7 @@
                     <!-- Left Column -->
                     <div class="col-md-6">
                         <p class="mb-2"><strong>Trip Type:</strong> {{ $booking->trip_type == 1 ? 'One Way' : 'Round Trip' }}</p>
-                        <p class="mb-2"><strong>Date of Travel:</strong> {{ \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y') }}</p>
+                        <p class="mb-2"><strong>Date of Travel:</strong> {{ \Carbon\Carbon::parse($booking->travel_date)->format('d-m-Y') }}</p>
                         <p class="mb-2"><strong>Time of Travel:</strong> {{ $booking->departure_time }}</p>
 
                         @if($booking->trip_type == 2)

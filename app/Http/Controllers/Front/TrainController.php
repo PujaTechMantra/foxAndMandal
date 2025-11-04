@@ -38,6 +38,8 @@ class TrainController extends Controller
             'traveller.*.seat_preference' => 'nullable|string|max:255',
             'traveller.*.food_preference' => 'nullable|string|max:255',
             'preference' => 'required',
+            'matter_code' => 'required_if:bill,3|nullable|string|max:255',
+            'remarks' => 'required_if:bill,1,2|nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -102,10 +104,11 @@ class TrainController extends Controller
                 'description' => $request['description'] ?? null,
                 'sequence_no' => $new_sequence_no ?? null,
                 'order_no' => $uniqueNo ?? null,
+                'bill_to_remarks' => $request->remarks,
             ]);
 
             return redirect()
-                ->route('front.travel.train.dashboard')
+                ->route('front.travel.dashboard')
                 ->with('success', 'Train/Bus booked successfully!');
 
         } catch (\Exception $e) {
@@ -113,7 +116,9 @@ class TrainController extends Controller
                 ->back()
                 ->with('error', 'Something went wrong. Please try again.')
                 ->withInput();
-        }
+            //     }catch (\Exception $e) {
+            // dd($e->getMessage());
+         }
     }
 
     public function searchStation(Request $request)
@@ -277,6 +282,8 @@ class TrainController extends Controller
             'traveller.*.seat_preference' => 'nullable|string|max:255',
             'traveller.*.food_preference' => 'nullable|string|max:255',
             'preference' => 'required',
+            'matter_code' => 'required_if:bill,3|nullable|string|max:255',
+            'remarks' => 'required_if:bill,1,2|nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -301,11 +308,10 @@ class TrainController extends Controller
             }
 
             // Prevent edits less than 6 hours before travel
-            $departureTime = \Carbon\Carbon::parse($booking->travel_date);
-            if ($now->greaterThan($departureTime->copy()->subHours(6))) {
-                return redirect()->back()->with('error',
-                    'Edits must be made at least 6 hours before the pickup time.'
-                );
+            $departureDateTime = \Carbon\Carbon::parse($booking->travel_date);
+            if ($now->greaterThan($departureDateTime->copy()->subHours(6))) {
+                return redirect()->back()
+                    ->with('error', 'Edits must be made at least 6 hours before the departure time.');
             }
 
             // Prepare traveller data
@@ -348,7 +354,7 @@ class TrainController extends Controller
                 'food_preference' => $foodPreferences,
                 'purpose' => $request->purpose ?? null,
                 'description' => $request->description ?? null,
-                'updated_at' => now(),
+                'bill_to_remarks' => $request->remarks,
             ];
 
             // Log edits (compare old vs new values)

@@ -37,6 +37,8 @@ class FlightController extends Controller
             'traveller.*.name' => 'required|string|max:255',
             'traveller.*.seat_preference' => 'nullable|string|max:255',
             'traveller.*.food_preference' => 'nullable|string|max:255',
+            'matter_code' => 'required_if:bill,3|nullable|string|max:255',
+            'remarks' => 'required_if:bill,1,2|nullable|string',
         ]);
         if ($request->trip_type == 2) {
             $rules['return_date'] = 'required|after_or_equal:departure_date';
@@ -96,6 +98,7 @@ class FlightController extends Controller
                 'description' => $request->description,
                 'sequence_no' => $newSeq,
                 'order_no' => $uniqueNo,
+                'bill_to_remarks' => $request->remarks,
             ]);
 
             return redirect()
@@ -264,6 +267,8 @@ class FlightController extends Controller
             'traveller.*.name' => 'required|string|max:255',
             'traveller.*.seat_preference' => 'nullable|string|max:255',
             'traveller.*.food_preference' => 'nullable|string|max:255',
+            'matter_code' => 'required_if:bill,3|nullable|string|max:255',
+            'remarks' => 'required_if:bill,1,2|nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -304,7 +309,7 @@ class FlightController extends Controller
 
         // Handle matter code (same logic as store)
         $matterId = null;
-        if ($request->bill == 2 && $request->filled('matter_code')) {
+        if ($request->bill == 3 && $request->filled('matter_code')) {
             $user = auth()->guard('front_user')->user();
             $matter = \App\Models\MatterCode::firstOrCreate(
                 ['matter_code' => $request->matter_code],
@@ -329,7 +334,7 @@ class FlightController extends Controller
             'traveller' => $travellerNames,
             'seat_preference' => $seatPreferences,
             'food_preference' => $foodPreferences,
-            'updated_at' => now(),
+            'bill_to_remarks' => $request->remarks,
         ];
 
         // Log changed fields

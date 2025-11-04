@@ -44,7 +44,7 @@
         <div class="col-md-6 mb-4" id="guestHouseDiv">
             <label class="form-label">Guest Houses</label>
             <select name="property_id" class="form-control">
-                <option>Select Location</option>
+                <option value="">Select Location</option>
                 @foreach($properties as $property)
                     <option value="{{ $property->id }}" 
                         {{ old('property_id') == $property->id ? 'selected' : '' }}>
@@ -271,28 +271,6 @@ $(document).ready(function () {
     $('#hotelBookingForm').on('submit', function () {
         $('#travellerDataInput').val(JSON.stringify(personList));
     });
-
-
-        $("#matterCodeInput").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "{{ route('front.travel.matter-code.suggest') }}",
-                    data: { query: request.term },
-                    success: function(data) {
-                        response($.map(data, function(item) {
-                            return {
-                                label: item.matter_code + ' (' + item.client_name + ')',
-                                value: item.matter_code
-                            };
-                        }));
-                    }
-                });
-            },
-            minLength: 1,
-            select: function(event, ui) {
-                $("#matterCodeInput").val(ui.item.value);
-            }
-        });
 
 
     $('#guestBtn').click(function () {

@@ -19,12 +19,11 @@
     <div class="booking-wrapper mx-auto p-5">
         <form class="booking-form" id="hotelBookingForm" 
               method="POST" 
-              action="{{ route('front.travel.hotel.update', $booking->id) }}">
+              action="{{ route('front.travel.hotel.update')}}">
             @csrf
-            @method('PUT')
-
-            <input type="hidden" name="user_id" value="{{ $booking->user_id }}">
-            <input type="hidden" name="hotel_type" id="tripTypeInput" value="{{ old('hotel_type', $booking->hotel_type) }}">
+            <input type="hidden" name="order_no" value="{{ $booking->order_no }}">
+            <input type="hidden" name="user_id" value="{{ Auth::guard('front_user')->id() }}">
+            <input type="hidden" name="hotel_type" id="tripTypeInput" value="{{$booking->hotel_type}}">
 
             <div class="text-center mb-4">
                 <div class="trip-type d-inline-flex overflow-hidden">
@@ -55,7 +54,7 @@
                         name="hotel_preference" 
                         rows="2" 
                         class="form-control" 
-                        placeholder="Type your hotel preference here">{{ old('hotel_preference', $booking->hotel_preference) }}</textarea>
+                        placeholder="Type your hotel preference here">{{ old('hotel_preference', $booking->text) }}</textarea>
                 </div>
             </div>
 
@@ -67,7 +66,7 @@
                         type="text" 
                         class="form-control datetimepicker" 
                         name="departure_date"
-                        value="{{ old('departure_date', \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y H:i')) }}"
+                        value="{{ old('departure_date', \Carbon\Carbon::parse($booking->checkin_date)->format('d-m-Y H:i')) }}"
                     >
                 </div>
 
@@ -77,7 +76,7 @@
                         type="text" 
                         class="form-control datetimepicker" 
                         name="return_date"
-                        value="{{ old('return_date', \Carbon\Carbon::parse($booking->return_date)->format('d-m-Y H:i')) }}"
+                        value="{{ old('return_date', \Carbon\Carbon::parse($booking->checkout_date)->format('d-m-Y H:i')) }}"
                     >
                 </div>
             </div>
@@ -162,7 +161,7 @@
 
             <div class="mb-5" id="matter-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'block' : 'none' }};">
                 <label class="form-label">Enter Matter Code</label>
-                <input class="form-control" id="matterCodeInput" name="matter_code" type="text" value="{{ old('matter_code', $booking->matter_code) }}" placeholder="Type at least 3 characters to search..">
+                <input class="form-control" id="matterCodeInput" name="matter_code" type="text" value="{{ old('matter_code', optional($booking->matter)->matter_code) }}" placeholder="Type at least 3 characters to search..">
             </div>
 
             <div class="text-center">
@@ -211,28 +210,6 @@ $(document).ready(function () {
         } else {
             $('#matter-div').hide();
             $('#remarks-div').show();
-        }
-    });
-
-    // Autocomplete for matter code
-    $("#matterCodeInput").autocomplete({
-        source: function(request, response) {
-            $.ajax({
-                url: "{{ route('front.travel.matter-code.suggest') }}",
-                data: { query: request.term },
-                success: function(data) {
-                    response($.map(data, function(item) {
-                        return {
-                            label: item.matter_code + ' (' + item.client_name + ')',
-                            value: item.matter_code
-                        };
-                    }));
-                }
-            });
-        },
-        minLength: 1,
-        select: function(event, ui) {
-            $("#matterCodeInput").val(ui.item.value);
         }
     });
 

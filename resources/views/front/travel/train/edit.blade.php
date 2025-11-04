@@ -19,7 +19,7 @@
     <div class="booking-wrapper mx-auto p-5">
         <form class="booking-form" id="trainBookingForm" 
               method="POST" 
-              action="{{ route('front.travel.train.update', $booking->order_no) }}">
+              action="{{ route('front.travel.train.update') }}">
             @csrf
 
             <input type="hidden" name="order_no" value="{{ $booking->order_no }}">
@@ -61,8 +61,8 @@
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Date of Departure</label>
-                    <input type="text" class="form-control" name="departure_date"
-                           value="{{ old('departure_date', $booking->departure_date ? \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y') : '') }}">
+                    <input type="text" class="form-control" name="departure_date" id="departure_date"
+                          value="{{ old('departure_date', $booking->travel_date ? \Carbon\Carbon::parse($booking->travel_date)->format('d-m-Y') : '') }}">
                 </div>
 
                 <div class="col-md-6 mb-4">
@@ -83,8 +83,8 @@
             <div class="row {{ old('trip_type', $booking->trip_type) == 2 ? '' : 'd-none' }}" id="return-div">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Date of Return</label>
-                    <input type="text" class="form-control" name="return_date"
-                         value="{{ old('return_date', $booking->return_date ? \Carbon\Carbon::parse($booking->departure_date)->format('d-m-Y') : '') }}">
+                    <input type="text" class="form-control" name="return_date" id="return_date"
+                         value="{{ old('return_date', $booking->return_date ? \Carbon\Carbon::parse($booking->return_date)->format('d-m-Y') : '') }}">
                 </div>
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Time of Return</label>
@@ -108,16 +108,21 @@
             </div>
 
             <!-- Travellers -->
-            <div class="mb-4" id="personCardWrapper" style="display: none;">
-                <div class="card person-card shadow-sm border-0">
-                    <div class="card-body" id="personCardBody"></div>
-                </div>
-            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label">Travellers</label>
+                    <div class="mb-4" id="personCardWrapper" style="display: none;">
+                        <div class="card person-card shadow-sm border-0">
+                            <div class="card-body" id="personCardBody"></div>
+                        </div>
+                    </div>
 
-            <div class="mb-4">
-                <button type="button" class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#addPersonModal">
-                    + Add Person
-                </button>
+                    <div class="mb-4">
+                        <button type="button" class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#addPersonModal">
+                            + Add Person
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="row">
@@ -340,26 +345,6 @@ $(document).ready(function () {
         $('#travellerDataInput').val(JSON.stringify(personList));
     });
 
-     $("#matterCodeInput").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "{{ route('front.travel.matter-code.suggest') }}",
-                    data: { query: request.term },
-                    success: function(data) {
-                        response($.map(data, function(item) {
-                            return {
-                                label: item.matter_code + ' (' + item.client_name + ')',
-                                value: item.matter_code
-                            };
-                        }));
-                    }
-                });
-            },
-            minLength: 1,
-            select: function(event, ui) {
-                $("#matterCodeInput").val(ui.item.value);
-            }
-        });
 });
 </script>
 @endsection

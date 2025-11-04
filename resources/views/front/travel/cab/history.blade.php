@@ -20,7 +20,7 @@
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
                     <h5 class="fw-semibold text-dark mb-0">
-                        ✈️ {{ $booking->from_location }} 
+                        🚗 {{ $booking->from_location }} 
                         <i class="bi bi-arrow-right mx-1 text-secondary"></i> 
                         {{ $booking->to_location }}
                     </h5>

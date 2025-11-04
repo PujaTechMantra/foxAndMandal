@@ -97,7 +97,7 @@
             <div class="row" id="return-div" style="display: {{ old('trip_type', 1) == 2 ? 'block' : 'none' }};">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Return Date</label>
-                    <input type="text" class="form-control" name="return_date" value="{{ old('return_date', now()->format('d-m-Y')) }}">
+                    <input type="text" class="form-control" id="return_date" name="return_date" value="{{ old('return_date', now()->format('d-m-Y')) }}">
                 </div>
 
                 <div class="col-md-6 mb-4">
@@ -114,16 +114,21 @@
                 </div>
             </div>
 
-            <div class="mb-4" id="personCardWrapper" style="display: none;">
-                <div class="card person-card shadow-sm border-0">
-                    <div class="card-body" id="personCardBody"></div>
-                </div>
-            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label">Travellers</label>
+                    <div class="mb-4" id="personCardWrapper" style="display: none;">
+                        <div class="card person-card shadow-sm border-0">
+                            <div class="card-body" id="personCardBody"></div>
+                        </div>
+                    </div>
 
-            <div class="mb-4">
-                <button type="button" class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#addPersonModal">
-                    + Add Person
-                </button>
+                    <div class="mb-4">
+                        <button type="button" class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#addPersonModal">
+                            + Add Person
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="row">
@@ -154,7 +159,7 @@
 
             <div class="mb-5" id="matter-div" style="display: {{ old('bill') == 3 ? 'block' : 'none' }};">
                 <label class="form-label">Enter Matter Code</label>
-                <input class="form-control" name="matter_code" type="text" value="{{ old('matter_code') }}" placeholder="Type at least 3 characters to search..">
+                <input class="form-control" id="matterCodeInput" name="matter_code" type="text" value="{{ old('matter_code') }}" placeholder="Type at least 3 characters to search..">
             </div>
 
             <div class="text-center">

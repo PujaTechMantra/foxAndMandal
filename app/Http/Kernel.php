@@ -68,5 +68,6 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'auth.front_user' => \App\Http\Middleware\FrontUserAuth::class,
+        'guest.front' => \App\Http\Middleware\RedirectIfFrontUserAuthenticated::class,
     ];
 }

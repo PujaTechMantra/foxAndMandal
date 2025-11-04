@@ -21,27 +21,43 @@
 <body>
 
     {{-- ======= Header/Navbar ======= --}}
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <!-- Logo -->
             <a class="navbar-brand d-flex align-items-center" href="{{ route('front.dashboard') }}">
                 <img src="{{ asset('backend/images/logo.png') }}" alt="Logo" class="gold-logo">
             </a>
 
-            <div class="d-flex align-items-center gap-3 ms-auto">
-                <div class="user-info">
-                    Welcome, <strong>{{ Auth::guard('front_user')->user()->name ?? 'Guest' }}</strong>
-                </div>
-                <form id="logout-form" action="{{ route('front.logout') }}" method="POST" class="d-none">
-                    @csrf
-                </form>
+            <!-- Toggler for mobile -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu"
+                aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                <a href="#" class="logout-btn" title="Logout"
-                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="bi bi-power"></i>
-                </a>
+            <!-- Collapsible menu -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarMenu">
+                <ul class="navbar-nav align-items-lg-center gap-3 mt-3 mt-lg-0">
+                    <li class="nav-item text-light">
+                        Welcome, <strong>{{ Auth::guard('front_user')->user()->name ?? 'Guest' }}</strong>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="logout-btn d-flex align-items-center gap-1"
+                            title="Logout"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="bi bi-power"></i>
+                            <span class="d-lg-inline d-none">Logout</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
+
+            <!-- Hidden logout form -->
+            <form id="logout-form" action="{{ route('front.logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
         </div>
     </nav>
+
 
     {{-- ======= Page Content ======= --}}
     <div class="container py-4">

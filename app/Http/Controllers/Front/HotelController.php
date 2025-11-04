@@ -87,18 +87,37 @@ class HotelController extends Controller
             'order_no' => $uniqueNo,
         ]);
 
+        $user = auth()->guard('front_user')->user();
+            $email_data = [
+                'name' => $user->name,
+                'subject' => 'Accommodation Booking Request # '.$uniqueNo,
+                'email' => $user->email,
+                'hotelBooking' => $booking,
+               
+                'blade_file' => 'mail/hotel-booking-mail',
+            ];
+                $mailLog = MailActivity::create([
+                    'email' => $user->email,
+                    'type' => 'hotel-booking-information-sent',
+                    'sent_at' => now(),
+                    'status' => 'pending',
+                ]);
+                try {
+                     $ccEmail = ['admin@foxandmandal.co.in','pintu.chakraborty@foxandmandal.co.in','sumit.dey@foxandmandal.co.in','amitava.mukherjee@foxandmandal.co.in','surya.sarkar@foxandmandal.co.in'];
+                     $bccEmail = ['amitava.mukherjee@foxandmandal.co.in','surya.sarkar@foxandmandal.co.in'];
+                    //  SendMail($email_data,$ccEmail, $bccEmail);
+            
+                    $mailLog->update(['status' => 'sent']);
+            
+                   
+                } catch (\Exception $e) {
+                    \Log::error('Hotel booking mail failed: ' . $e->getMessage());
+                    $mailLog->update(['status' => 'failed']);
+                }
+
         if (!$booking) {
             return redirect()->back()->with('error', 'Failed to create hotel booking.');
         }
-
-        // Email log
-        // $user = User::find($validatedData['user_id']);
-        // MailActivity::create([
-        //     'email' => $user->email,
-        //     'type' => 'hotel-booking-information-sent',
-        //     'sent_at' => now(),
-        //     'status' => 'sent',
-        // ]);
 
         return redirect()->route('front.travel.dashboard')->with('success', 'Booked successfully!');
     }

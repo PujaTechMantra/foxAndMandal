@@ -220,7 +220,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 // ---------------- FRONT USER LOGIN (OTP) ----------------
 Route::prefix('front')->name('front.')->group(function () {
-    Route::get('/login', [FrontAuthController::class, 'showLoginForm'])->name('login');
+    Route::get('/login', [FrontAuthController::class, 'showLoginForm'])->name('login')->middleware('guest.front');
     Route::post('/send-otp', [FrontAuthController::class, 'sendOtp'])->name('send.otp');
     Route::post('/verify-otp', [FrontAuthController::class, 'verifyOtp'])->name('verify.otp');
     Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');

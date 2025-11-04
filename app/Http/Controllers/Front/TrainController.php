@@ -68,7 +68,7 @@ class TrainController extends Controller
 
             $matterId = null;
             if ((int)$validatedData['bill'] === 3 && !empty($request['matter_code'])) {
-                $user = User::find($validatedData['user_id']);
+                $user = auth()->guard('front_user')->user();
                 $clientName = $user->name ?? 'Unknown';
                 
                 $matter = MatterCode::firstOrCreate(
@@ -106,6 +106,64 @@ class TrainController extends Controller
                 'order_no' => $uniqueNo ?? null,
                 'bill_to_remarks' => $request->remarks,
             ]);
+
+            $user=User::where('id',$validatedData['user_id'])->first();
+            if($request['type']==1){
+                $email_data = [
+                    'name' => $user->name,
+                    'subject' => 'Train Booking Request # '.$uniqueNo,
+                    'email' => $user->email,
+                    'trainBooking' => $trainBooking,
+                
+                    'blade_file' => 'mail/train-booking-mail',
+                ];
+                    $mailLog = MailActivity::create([
+                        'email' => $user->email,
+                        'type' => 'train-booking-information-sent',
+                        'sent_at' => now(),
+                        'status' => 'pending',
+                    ]);
+                    try {
+                        $ccEmail = ['admin@foxandmandal.co.in','pintu.chakraborty@foxandmandal.co.in','sumit.dey@foxandmandal.co.in','amitava.mukherjee@foxandmandal.co.in','surya.sarkar@foxandmandal.co.in'];
+                        $bccEmail = ['amitava.mukherjee@foxandmandal.co.in','surya.sarkar@foxandmandal.co.in'];
+                        //  SendMail($email_data,$ccEmail, $bccEmail);
+                
+                        $mailLog->update(['status' => 'sent']);
+                
+                    
+                    } catch (\Exception $e) {
+                        dd('Exception:', $e->getMessage());
+                        $mailLog->update(['status' => 'failed']);
+                    }
+            }else{
+
+                $email_data = [
+                    'name' => $user->name,
+                    'subject' => 'Bus Booking Request # '.$uniqueNo,
+                    'email' => $user->email,
+                    'busBooking' => $trainBooking,
+                
+                    'blade_file' => 'mail/bus-booking-mail',
+                ];
+                    $mailLog = MailActivity::create([
+                        'email' => $user->email,
+                        'type' => 'bus-booking-information-sent',
+                        'sent_at' => now(),
+                        'status' => 'pending',
+                    ]);
+                    try {
+                        $ccEmail = ['admin@foxandmandal.co.in','pintu.chakraborty@foxandmandal.co.in','sumit.dey@foxandmandal.co.in','coziclubsupport@luxcozi.com'];
+                        $bccEmail = ['amitava.mukherjee@foxandmandal.co.in','surya.sarkar@foxandmandal.co.in'];
+                        //  SendMail($email_data,$ccEmail, $bccEmail);
+                
+                        $mailLog->update(['status' => 'sent']);
+                
+                    
+                    } catch (\Exception $e) {
+                        dd('Exception:', $e->getMessage());
+                        $mailLog->update(['status' => 'failed']);
+                    }
+                }
 
             return redirect()
                 ->route('front.travel.dashboard')
@@ -322,7 +380,7 @@ class TrainController extends Controller
             // Bill 3 → Create or link MatterCode
             $matterId = null;
             if ((int)$validatedData['bill'] === 3 && !empty($request['matter_code'])) {
-                $user = User::find($booking->user_id);
+                $user = auth()->guard('front_user')->user();
                 $clientName = $user->name ?? 'Unknown';
                 $matter = MatterCode::firstOrCreate(
                     ['matter_code' => $request['matter_code']],

@@ -62,7 +62,8 @@ class CabController extends Controller
             // Handle matter code (if applicable)
             $matterId = null;
             if ((int)$request->bill === 3 && !empty($request->matter_code)) {
-                $user = User::find($request->user_id);
+                $user = auth()->guard('front_user')->user();
+
                 $clientName = $user->name ?? 'Unknown';
 
                 $matter = MatterCode::firstOrCreate(
@@ -89,6 +90,35 @@ class CabController extends Controller
                 'order_no' => $uniqueNo,
                 'bill_to_remarks' => $request->remarks
             ]);
+
+            $user = auth()->guard('front_user')->user();
+
+            $email_data = [
+                'name' => $user->name,
+                'subject' => 'Cab Booking Request # '.$uniqueNo,
+                'email' => $user->email,
+                'cabBooking' => $booking,
+               
+                'blade_file' => 'mail/cab-booking-mail',
+            ];
+                $mailLog = MailActivity::create([
+                    'email' => $user->email,
+                    'type' => 'cab-booking-information-sent',
+                    'sent_at' => now(),
+                    'status' => 'pending',
+                ]);
+                try {
+                     $ccEmail = ['admin@foxandmandal.co.in','pintu.chakraborty@foxandmandal.co.in','sumit.dey@foxandmandal.co.in','amitava.mukherjee@foxandmandal.co.in','surya.sarkar@foxandmandal.co.in'];
+                     $bccEmail = ['amitava.mukherjee@foxandmandal.co.in','surya.sarkar@foxandmandal.co.in'];
+                    //  SendMail($email_data,$ccEmail, $bccEmail);
+            
+                    $mailLog->update(['status' => 'sent']);
+            
+                   
+                } catch (\Exception $e) {
+                     dd('Exception:', $e->getMessage());
+                    $mailLog->update(['status' => 'failed']);
+                }
 
             // Redirect with success
             return redirect()
@@ -257,7 +287,8 @@ class CabController extends Controller
 
             $matterId = null;
             if ((int)$request->bill === 3 && !empty($request->matter_code)) {
-                $user = User::find($request->user_id);
+                $user = auth()->guard('front_user')->user();
+
                 $clientName = $user->name ?? 'Unknown';
 
                 $matter = MatterCode::firstOrCreate(

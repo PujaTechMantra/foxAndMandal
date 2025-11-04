@@ -63,7 +63,7 @@ class FlightController extends Controller
 
             $matterId = null;
             if ((int)$request->bill === 3 && !empty($request['matter_code'])) {
-                $user = User::find($request->user_id);
+                $user = auth()->guard('front_user')->user();
                 $clientName = $user->name ?? 'Unknown';
                 
                 $matter = MatterCode::firstOrCreate(
@@ -100,6 +100,35 @@ class FlightController extends Controller
                 'order_no' => $uniqueNo,
                 'bill_to_remarks' => $request->remarks,
             ]);
+
+            $user = auth()->guard('front_user')->user();
+            $email_data = [
+                'name' => $user->name,
+                'subject' => 'Flight Booking Request # '.$uniqueNo,
+                'email' => $user->email,
+                'flightBooking' => $flightBooking,
+               
+                'blade_file' => 'mail/flight-booking-mail',
+            ];
+                $mailLog = MailActivity::create([
+                    'email' => $user->email,
+                    'type' => 'flight-booking-information-sent',
+                    'sent_at' => now(),
+                    'status' => 'pending',
+                ]);
+                try {
+                     $ccEmail = ['admin@foxandmandal.co.in','pintu.chakraborty@foxandmandal.co.in','sumit.dey@foxandmandal.co.in','amitava.mukherjee@foxandmandal.co.in','surya.sarkar@foxandmandal.co.in'];
+                     $bccEmail = ['amitava.mukherjee@foxandmandal.co.in','surya.sarkar@foxandmandal.co.in'];
+                    //  SendMail($email_data,$ccEmail, $bccEmail);
+            
+                    $mailLog->update(['status' => 'sent']);
+            
+                   
+                } catch (\Exception $e) {
+                     dd('Exception:', $e->getMessage());
+                    $mailLog->update(['status' => 'failed']);
+            
+                }
 
             return redirect()
                 ->route('front.travel.dashboard')

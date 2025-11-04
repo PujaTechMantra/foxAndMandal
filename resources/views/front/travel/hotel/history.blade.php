@@ -37,7 +37,15 @@
                 <div class="row gy-3">
                     <div class="col-md-6">
                         <p class="mb-2"><strong>House Type:</strong> {{ $booking->hotel_type == 1 ? 'Guest House' : 'Hotel' }}</p>
-                        <p class="mb-2"><strong>Location:</strong> {{ $booking->property->name.', '.$booking->property->address}}</p>
+                        @if( $booking->hotel_type == 1)
+                        <p class="mb-2"><strong>Location:</strong> 
+                            {{ $booking->property?->name ? $booking->property->name.', '.$booking->property->address : 'N/A' }}
+                        </p>
+                        @else
+                        <p class="mb-2"><strong>Preferences:</strong> 
+                            {{ $booking->text ? $booking->text : 'N/A' }}
+                        </p>
+                        @endif
                         <p class="mb-2"><strong>Check-In Date & Time:</strong> {{ \Carbon\Carbon::parse($booking->checkin_date)->format('d-m-Y H:i') }}</p>
                         <p class="mb-2"><strong>Check-Out Date & Time:</strong> {{ \Carbon\Carbon::parse($booking->checkout_date)->format('d-m-Y H:i') }}</p>
                         <p class="mb-2"><strong>Guest Type:</strong> {{ $booking->guest_type }}</p>

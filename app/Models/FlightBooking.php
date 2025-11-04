@@ -19,6 +19,7 @@ class FlightBooking extends Model
         'return_time',     
         'traveler_number',  
         'bill_to',  
+        'bill_to_remarks',
         'arrival_time',  
         'status',
         'traveller',

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\FlightBooking;
 use App\Models\User;
+use App\Models\MailActivity;
 use App\Models\MatterCode;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -80,7 +81,7 @@ class FlightController extends Controller
             $returnDate = $tripType == 1 ? null : $request->input('return_date');
             $returnTime = $tripType == 1 ? null : $request->input('return-time');
 
-            FlightBooking::create([
+            $flightBooking = FlightBooking::create([
                 'user_id' => $request->user_id,
                 'trip_type' => $tripType,
                 'from' => $request->from,

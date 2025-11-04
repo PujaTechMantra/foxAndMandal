@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\TrainBooking;
 use App\Models\User;
 use App\Models\MatterCode;
+use App\Models\MailActivity;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 

@@ -12,6 +12,7 @@ class CabBooking extends Model
     protected $fillable = [
         'user_id', 
         'bill_to',
+        'bill_to_remarks',
         'booking_type',
         'cab_type',
         'from_location', 

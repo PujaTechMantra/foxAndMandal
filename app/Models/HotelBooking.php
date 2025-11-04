@@ -10,7 +10,7 @@ class HotelBooking extends Model
     protected $table = 'hotel_bookings';
 
     protected $fillable = [
-        'user_id','room_id', 'property_id',  'checkin_date', 'checkin_time', 'checkout_date', 'guest_number','room_number', 'status', 'bill_to','matter_code','guest_type','hotel_type','text','sequence_no',
+        'user_id','room_id', 'property_id',  'checkin_date', 'checkin_time', 'checkout_date', 'guest_number','room_number', 'status', 'bill_to','bill_to_remarks','matter_code','guest_type','hotel_type','text','sequence_no',
         'order_no', 'seat_preference','food_preference','purpose','description'
     ];
 

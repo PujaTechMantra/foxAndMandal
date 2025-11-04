@@ -75,7 +75,7 @@ class CabController extends Controller
             }
 
             // Create new cab booking record
-            CabBooking::create([
+            $booking=CabBooking::create([
                 'user_id' => $request->user_id,
                 'from_location' => $request->from,
                 'to_location' => $request->to,

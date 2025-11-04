@@ -141,7 +141,7 @@
 
             <div class="mb-5" id="remarks-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'none' : 'block' }};">
                 <label class="form-label">Remarks</label>
-                <textarea class="form-control" name="remarks" rows="2" placeholder="Please give your remark.">{{ old('remarks', $booking->remarks ?? '') }}</textarea>
+                <textarea class="form-control" name="remarks" rows="2" placeholder="Please give your remark.">{{ old('remarks', $booking->bill_to_remarks ?? '') }}</textarea>
             </div>
 
             <div class="mb-5" id="matter-div" style="display: {{ old('bill', $booking->bill_to) == 3 ? 'block' : 'none' }};">

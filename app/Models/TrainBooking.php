@@ -16,6 +16,7 @@ class TrainBooking extends Model
         'travel_date', 
         'departure_time', 
         'bill_to',
+        'bill_to_remarks',
         'matter_code',
         'type',
         'traveller',

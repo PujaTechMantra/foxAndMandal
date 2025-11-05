@@ -78,12 +78,14 @@
                             @foreach($booking->traveller as $traveller)
                                 <div class="traveller-box mt-2 border rounded-3 p-2 bg-light">
                                     <div><strong>{{ $traveller['title'] ?? '' }} {{ $traveller['name'] ?? '' }}</strong></div>
+                                    @if($booking->type == 1) 
                                     <div class="small text-muted">
                                         Seat Preference: {{ $traveller['seat_preference'] ?? '—' }} 
                                     </div>
                                     <div class="small text-muted">
                                          Food Preference: {{ $traveller['food_preference'] ?? '—' }}
                                     </div>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>

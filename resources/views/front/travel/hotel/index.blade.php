@@ -268,11 +268,6 @@ $(document).ready(function () {
         }
     });
 
-    $('#hotelBookingForm').on('submit', function () {
-        $('#travellerDataInput').val(JSON.stringify(personList));
-    });
-
-
     $('#guestBtn').click(function () {
     $(this).addClass('active');
     $('#hotelBtn').removeClass('active');

@@ -25,7 +25,9 @@
             <input type="hidden" name="order_no" value="{{ $booking->order_no }}">
             <input type="hidden" name="user_id" value="{{ Auth::guard('front_user')->id() }}">
             <input type="hidden" name="trip_type" id="tripTypeInput" value="{{ old('trip_type', $booking->trip_type) }}">
-            <input type="hidden" name="traveller_data" id="travellerDataInput">
+            <!-- <input type="hidden" name="traveller_data" id="travellerDataInput"> -->
+            <input type="hidden" name="traveller_data" id="travellerDataInput" 
+            value="{{ old('traveller_data') }}">
 
             <div class="row">
                 <div class="col-md-6 mb-4">
@@ -232,6 +234,19 @@
 <script>
 $(document).ready(function () {
     let personList = @json($booking->traveller ?? []);
+    let oldTravellerData = $('#travellerDataInput').val();
+
+    if (oldTravellerData) {
+        try {
+            const parsed = JSON.parse(oldTravellerData);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                personList = parsed;
+                renderPersons();
+            }
+        } catch (e) {
+            console.error("Invalid traveller data JSON:", e);
+        }
+    }
 
     // Trip type toggle
     $('#oneWayBtn').click(function () {

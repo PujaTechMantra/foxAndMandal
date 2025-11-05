@@ -249,7 +249,7 @@ class CabController extends Controller
             'order_no' => 'required|exists:cab_bookings,order_no',
             'bill' => 'required|integer|in:1,2,3',
             'from' => 'required|string|max:255',
-            'to' => 'nullable|string|max:255',
+            'to' => 'required|string|max:255',
             'departure_date' => 'required',
             'departure_time' => 'required',
             'traveller' => 'required|array|min:1',

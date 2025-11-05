@@ -64,8 +64,16 @@ class TrainController extends Controller
             }
 
             $travellerNames = collect($validatedData['traveller'])->pluck('name')->implode(',');
-            $seatPreferences = collect($validatedData['traveller'])->pluck('seat_preference')->implode(',');
-            $foodPreferences = collect($validatedData['traveller'])->pluck('food_preference')->implode(',');
+
+            if ((int)$request['preference'] === 1) {
+                // Train – keep seat & food preferences
+                $seatPreferences = collect($validatedData['traveller'])->pluck('seat_preference')->implode(',');
+                $foodPreferences = collect($validatedData['traveller'])->pluck('food_preference')->implode(',');
+            } else {
+                // Bus – ignore these fields
+                $seatPreferences = null;
+                $foodPreferences = null;
+            }
 
             $matterId = null;
             if ((int)$validatedData['bill'] === 3 && !empty($request['matter_code'])) {
@@ -375,9 +383,16 @@ class TrainController extends Controller
 
             // Prepare traveller data
             $travellerNames = collect($validatedData['traveller'])->pluck('name')->implode(',');
-            $seatPreferences = collect($validatedData['traveller'])->pluck('seat_preference')->implode(',');
-            $foodPreferences = collect($validatedData['traveller'])->pluck('food_preference')->implode(',');
 
+            if ((int)$request['preference'] === 1) {
+                // Train – keep seat & food preferences
+                $seatPreferences = collect($validatedData['traveller'])->pluck('seat_preference')->implode(',');
+                $foodPreferences = collect($validatedData['traveller'])->pluck('food_preference')->implode(',');
+            } else {
+                // Bus – ignore these fields
+                $seatPreferences = null;
+                $foodPreferences = null;
+            }
             // Bill 3 → Create or link MatterCode
             $matterId = null;
             if ((int)$validatedData['bill'] === 3 && !empty($request['matter_code'])) {

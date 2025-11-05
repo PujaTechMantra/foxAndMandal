@@ -32,7 +32,9 @@
 
             <input type="hidden" name="user_id" value="{{ Auth::guard('front_user')->id() }}">
             <input type="hidden" name="trip_type" id="tripTypeInput" value="{{ old('trip_type', 1) }}">
-            <input type="hidden" name="traveller_data" id="travellerDataInput">
+            <!-- <input type="hidden" name="traveller_data" id="travellerDataInput"> -->
+            <input type="hidden" name="traveller_data" id="travellerDataInput" 
+            value="{{ old('traveller_data') }}">
 
             <div class="row">
                 <div class="col-md-6 mb-4">
@@ -241,6 +243,41 @@
 <script>
 $(document).ready(function () {
     let personList = [];
+    let isTrain = $('input[name="preference"]:checked').val() === '1'; // 1=Train, 2=Bus
+
+    let oldTravellerData = $('#travellerDataInput').val();
+
+    if (oldTravellerData) {
+        try {
+            const parsed = JSON.parse(oldTravellerData);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                personList = parsed;
+                renderPersons();
+            }
+        } catch (e) {
+            console.error("Invalid traveller data JSON:", e);
+        }
+    }
+
+    // Toggle seat & food fields in modal based on Train/Bus
+    function togglePreferenceFields() {
+        if (isTrain) {
+            $('#personForm select[name="seatPref"]').closest('.mb-3').show();
+            $('#personForm select[name="foodPref"]').closest('.mb-3').show();
+        } else {
+            $('#personForm select[name="seatPref"]').closest('.mb-3').hide();
+            $('#personForm select[name="foodPref"]').closest('.mb-3').hide();
+        }
+    }
+
+    togglePreferenceFields();
+
+    // Update preference on change
+    $('input[name="preference"]').on('change', function () {
+        isTrain = $(this).val() === '1';
+        togglePreferenceFields();
+        renderPersons(); // Re-render cards to hide seat/food if Bus selected
+    });
 
     $('#oneWayBtn').click(function () {
         $(this).addClass('active');
@@ -268,11 +305,10 @@ $(document).ready(function () {
 
     $('#addPersonModal').on('show.bs.modal', function () {
         const $nameInput = $(this).find('input[name="name"]');
-
-        // If this is NOT the first traveller, clear the name
         if (personList.length > 0) {
-            $nameInput.val(''); 
+            $nameInput.val('');
         }
+        togglePreferenceFields();
     });
 
     $('#savePersonBtn').click(function () {
@@ -290,14 +326,15 @@ $(document).ready(function () {
             valid = false;
         }
 
-        if (!seat_preference) {
-            $('#addPersonModal select[name="seatPref"]').addClass('is-invalid');
-            valid = false;
-        }
-
-        if (!food_preference) {
-            $('#addPersonModal select[name="foodPref"]').addClass('is-invalid');
-            valid = false;
+        if (isTrain) {
+            if (!seat_preference) {
+                $('#addPersonModal select[name="seatPref"]').addClass('is-invalid');
+                valid = false;
+            }
+            if (!food_preference) {
+                $('#addPersonModal select[name="foodPref"]').addClass('is-invalid');
+                valid = false;
+            }
         }
 
         if (!valid) return;
@@ -305,9 +342,13 @@ $(document).ready(function () {
         let person = { 
             id: Date.now(), 
             name : `${title} ${name}`,
-            seat_preference, 
-            food_preference
         };
+
+        if (isTrain) {
+            person.seat_preference = seat_preference;
+            person.food_preference = food_preference;
+        }
+
         personList.push(person);
         renderPersons();
         $('#addPersonModal').modal('hide');
@@ -315,35 +356,29 @@ $(document).ready(function () {
         showToast('Person added successfully!', 'success');
     });
 
-    $('#personForm').on('input change', '.form-control, .form-select', function () {
-        $(this).removeClass('is-invalid');
-        $(this).siblings('.invalid-feedback').text($(this).attr('name') === 'name'
-            ? 'Please enter name.'
-            : $(this).attr('name') === 'seatPref'
-            ? 'Please choose seat preference.'
-            : 'Please choose food preference.'
-        );
-    });
-
-
     function renderPersons() {
         const $wrapper = $('#personCardWrapper');
         const $body = $('#personCardBody');
         $body.empty();
 
         if (personList.length === 0) return $wrapper.hide();
-
         $wrapper.show();
+
         personList.forEach((p, i) => {
+            let extra = '';
+            if (isTrain && p.seat_preference && p.food_preference) {
+                extra = `<p class="mb-0 text-muted small">
+                            <strong>Seat:</strong> ${p.seat_preference} &nbsp;|&nbsp;
+                            <strong>Food:</strong> ${p.food_preference}
+                         </p>`;
+            }
+
             const cardHtml = `
                 ${i > 0 ? '<hr class="my-3 border-gold">' : ''}
                 <div class="d-flex justify-content-between align-items-center flex-wrap py-2">
                     <div>
-                        <h6 class="mb-1 fw-semibold"> ${p.name}</h6>
-                        <p class="mb-0 text-muted small">
-                            <strong>Seat:</strong> ${p.seat_preference} &nbsp;|&nbsp;
-                            <strong>Food:</strong> ${p.food_preference}
-                        </p>
+                        <h6 class="mb-1 fw-semibold">${p.name}</h6>
+                        ${extra}
                     </div>
                     <button class="btn btn-sm btn-outline-danger rounded-circle delete-person" data-id="${p.id}">
                         <i class="bi bi-trash"></i>
@@ -352,47 +387,35 @@ $(document).ready(function () {
             $body.append(cardHtml);
         });
     }
-        $(function () {
-            $('input[name="from"]').autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "{{ route('front.travel.train.search') }}",
-                        data: { term: request.term },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 1, // start after typing 1 character
-            });
 
-            // Autocomplete for "To"
-            $('input[name="to"]').autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: "{{ route('front.travel.train.search') }}",
-                        data: { term: request.term },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 1
-            });
-        });
-
-
+    // Delete person
     $(document).on('click', '.delete-person', function () {
         const id = $(this).data('id');
         personList = personList.filter(p => p.id !== id);
         renderPersons();
     });
 
+    // Submit
     $('#trainBookingForm').on('submit', function () {
         $('#travellerDataInput').val(JSON.stringify(personList));
     });
 
-      
+    // Autocomplete
+    $(function () {
+        $('input[name="from"], input[name="to"]').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "{{ route('front.travel.train.search') }}",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 1
+        });
+    });
 });
 </script>
 @endsection
+

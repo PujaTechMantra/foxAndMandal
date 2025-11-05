@@ -139,6 +139,12 @@
         dateFormat: "d-m-Y H:i", 
         time_24hr: true
     });
+    flatpickr("#departure_time", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+    });
 
     $("#matterCodeInput").autocomplete({
             source: function(request, response) {

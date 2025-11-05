@@ -48,7 +48,6 @@
                         @endif
                         <p class="mb-2"><strong>Check-In Date & Time:</strong> {{ \Carbon\Carbon::parse($booking->checkin_date)->format('d-m-Y H:i') }}</p>
                         <p class="mb-2"><strong>Check-Out Date & Time:</strong> {{ \Carbon\Carbon::parse($booking->checkout_date)->format('d-m-Y H:i') }}</p>
-                        <p class="mb-2"><strong>Guest Type:</strong> {{ $booking->guest_type }}</p>
                         <p class="mb-2"><strong>Food Preference:</strong> {{ $booking->food_preference ?? 'N/A' }}</p>
                         <p class="mb-2"><strong>Purpose/Description:</strong> {{ $booking->purpose ?? 'N/A' }}</p>
                     </div>
@@ -61,8 +60,10 @@
                         @if($booking->bill_to == 3)
                             <p class="mb-2"><strong>Matter Code:</strong> {{ $booking->matter->matter_code ?? 'N/A' }}</p>
                         @else
-                            <p class="mb-2"><strong>Remarks:</strong> {{ $booking->remarks ?? 'N/A' }}</p>
+                            <p class="mb-2"><strong>Remarks:</strong> {{ $booking->bill_to_remarks ?? 'N/A' }}</p>
                         @endif
+                        <p class="mb-2"><strong>Guest Type:</strong> {{ $booking->guest_type }}</p>
+                        <p class="mb-2"><strong>Number of Guests:</strong> {{ $booking->guest_number }}</p>
                         
                     </div>
                 </div>

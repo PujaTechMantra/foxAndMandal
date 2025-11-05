@@ -1,5 +1,7 @@
 @extends('front.layouts.app')
 
+@section('title', 'Travel')
+
 @section('content')
 <div class="container py-4">
     <!-- Back button and title -->

@@ -69,9 +69,12 @@
                     <label class="form-label">Time of Departure</label>
                     <div class="radio-group">
                         @foreach($times as $value => $label)
+                            @php
+                                $combinedValue = $label . ' ' . $value;
+                            @endphp
                             <label>
-                                <input type="radio" name="departure_time" value="{{ $value }}"
-                                    {{ old('departure_time', $booking->departure_time) == $value ? 'checked' : '' }}>
+                                <input type="radio" name="departure_time" value="{{ $label . ' ' . $value }}"
+                                    {{ old('departure_time', $booking->departure_time) == $combinedValue ? 'checked' : '' }}>
                                 {{ $label }} <span>{{ $value }}</span>
                             </label>
                         @endforeach
@@ -90,9 +93,12 @@
                     <label class="form-label">Time of Return</label>
                     <div class="radio-group">
                         @foreach($times as $value => $label)
+                            @php
+                                $combinedValue = $label . ' ' . $value;
+                            @endphp
                             <label>
-                                <input type="radio" name="return_time" value="{{ $value }}"
-                                    {{ old('return_time', $booking->return_time) == $value ? 'checked' : '' }}>
+                                <input type="radio" name="return_time" value="{{ $label . ' ' . $value }}"
+                                    {{ old('return_time', $booking->return_time) == $combinedValue ? 'checked' : '' }}>
                                 {{ $label }} <span>{{ $value }}</span>
                             </label>
                         @endforeach

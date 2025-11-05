@@ -52,7 +52,7 @@
                         @if($booking->bill_to == 3)
                             <p class="mb-2"><strong>Matter Code:</strong> {{ $booking->matter->matter_code ?? 'N/A' }}</p>
                         @else
-                            <p class="mb-2"><strong>Remarks:</strong> {{ $booking->remarks ?? 'N/A' }}</p>
+                            <p class="mb-2"><strong>Remarks:</strong> {{ $booking->bill_to_remarks ?? 'N/A' }}</p>
                         @endif
                         <div class="mt-3">
                             <strong>Travellers:</strong>
@@ -73,15 +73,22 @@
                             <p class="mb-2 d-flex align-items-center gap-2 flex-wrap">
                                 <strong>Ticket :</strong>
 
-                                <a href="{{ !empty($booking->ticket) ? asset($booking->ticket) : '#' }}" 
+                                <a href="{{ !empty($booking->ticket) ? 'https://fms.fmeoffice.online/fms/public/'.$booking->ticket : '#' }}"
                                 class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 shadow-sm" target="blank">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
-
-                                <a href="{{ !empty($booking->ticket) ? asset($booking->ticket) : '#' }}" 
-                                class="btn btn-outline-success btn-sm d-flex align-items-center gap-1 shadow-sm" download>
+                                <!-- <a href="{{ !empty($booking->ticket) ? asset($booking->ticket) : '#' }}" 
+                                class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 shadow-sm" target="blank">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a> -->
+                                <a href="{{ !empty($booking->ticket) ? 'https://fms.fmeoffice.online/fms/public/'.$booking->ticket : '#' }}" 
+                                 class="btn btn-outline-success btn-sm d-flex align-items-center gap-1 shadow-sm" download>
                                     <i class="bi bi-download"></i>
                                 </a>
+                                <!-- <a href="{{ !empty($booking->ticket) ? asset($booking->ticket) : '#' }}" 
+                                class="btn btn-outline-success btn-sm d-flex align-items-center gap-1 shadow-sm" download>
+                                    <i class="bi bi-download"></i>
+                                </a> -->
                             </p>
 
                             <p class="mb-2">

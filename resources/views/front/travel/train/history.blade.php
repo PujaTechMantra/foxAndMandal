@@ -42,11 +42,17 @@
                     <div class="col-md-6">
                         <p class="mb-2"><strong>Trip Type:</strong> {{ $booking->trip_type == 1 ? 'One Way' : 'Round Trip' }}</p>
                         <p class="mb-2"><strong>Date of Travel:</strong> {{ \Carbon\Carbon::parse($booking->travel_date)->format('d-m-Y') }}</p>
-                        <p class="mb-2"><strong>Time of Travel:</strong> {{ $booking->departure_time }}</p>
+                        @php
+                            $timeRange = preg_replace('/^[^\d]*(.*)$/', '$1', $booking->departure_time);
+                        @endphp  
+                        <p class="mb-2"><strong>Time of Travel:</strong> {{ $timeRange }}</p>
 
                         @if($booking->trip_type == 2)
+                            @php
+                                $timeRange = preg_replace('/^[^\d]*(.*)$/', '$1', $booking->return_time);
+                            @endphp                            
                             <p class="mb-2"><strong>Date of Return:</strong> {{ \Carbon\Carbon::parse($booking->return_date)->format('d-m-Y') }}</p>
-                            <p class="mb-2"><strong>Time of Return:</strong> {{ $booking->return_time }}</p>
+                            <p class="mb-2"><strong>Time of Return:</strong> {{ $timeRange }}</p>
                         @endif
                         
                         <p class="mb-2"><strong>Preference:</strong> {{ ($booking->type == 1) ? 'Train' : 'Bus' }}</p>
@@ -64,7 +70,7 @@
                         @if($booking->bill_to == 3)
                             <p class="mb-2"><strong>Matter Code:</strong> {{ $booking->matter->matter_code ?? 'N/A' }}</p>
                         @else
-                            <p class="mb-2"><strong>Remarks:</strong> {{ $booking->remarks ?? 'N/A' }}</p>
+                            <p class="mb-2"><strong>Remarks:</strong> {{ $booking->bill_to_remarks ?? 'N/A' }}</p>
                         @endif
 
                         <div class="mt-3">
@@ -92,15 +98,22 @@
                             <p class="mb-2 d-flex align-items-center gap-2 flex-wrap">
                                 <strong>Ticket :</strong>
 
-                                <a href="{{ !empty($booking->ticket) ? asset($booking->ticket) : '#' }}" 
+                                <a href="{{ !empty($booking->ticket) ? 'https://fms.fmeoffice.online/fms/public/'.$booking->ticket : '#' }}"
                                 class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 shadow-sm" target="blank">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
-
-                                <a href="{{ !empty($booking->ticket) ? asset($booking->ticket) : '#' }}" 
-                                class="btn btn-outline-success btn-sm d-flex align-items-center gap-1 shadow-sm" download>
+                                <!-- <a href="{{ !empty($booking->ticket) ? asset($booking->ticket) : '#' }}" 
+                                class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 shadow-sm" target="blank">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a> -->
+                                <a href="{{ !empty($booking->ticket) ? 'https://fms.fmeoffice.online/fms/public/'.$booking->ticket : '#' }}" 
+                                 class="btn btn-outline-success btn-sm d-flex align-items-center gap-1 shadow-sm" download>
                                     <i class="bi bi-download"></i>
                                 </a>
+                                <!-- <a href="{{ !empty($booking->ticket) ? asset($booking->ticket) : '#' }}" 
+                                class="btn btn-outline-success btn-sm d-flex align-items-center gap-1 shadow-sm" download>
+                                    <i class="bi bi-download"></i>
+                                </a> -->
                             </p>
 
                             <p class="mb-2">

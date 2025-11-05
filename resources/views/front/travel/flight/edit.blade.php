@@ -57,7 +57,7 @@
                     '8 pm - 12 am' => 'Night',
                 ];
             @endphp
-
+           
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <label class="form-label">Departure Date</label>
@@ -69,9 +69,12 @@
                     <label class="form-label">Departure Time</label>
                     <div class="radio-group">
                         @foreach($times as $value => $label)
+                            @php
+                                $combinedValue = $label . ' ' . $value;
+                            @endphp
                             <label>
-                                <input type="radio" name="departure-time" value="{{ $value }}"
-                                    {{ old('departure-time', $booking->arrival_time) == $value ? 'checked' : '' }}>
+                                <input type="radio" name="departure-time" value="{{ $combinedValue }}"
+                                    {{ old('departure-time', $booking->arrival_time) == $combinedValue ? 'checked' : '' }}>
                                 {{ $label }} <span>{{ $value }}</span>
                             </label>
                         @endforeach
@@ -90,9 +93,12 @@
                     <label class="form-label">Return Time</label>
                     <div class="radio-group">
                         @foreach($times as $value => $label)
+                            @php
+                                $combinedValue = $label . ' ' . $value;
+                            @endphp
                             <label>
-                                <input type="radio" name="return-time" value="{{ $value }}"
-                                    {{ old('return-time', $booking->return_time) == $value ? 'checked' : '' }}>
+                                <input type="radio" name="return-time" value="{{ $combinedValue }}"
+                                    {{ old('return-time', $booking->return_time) == $combinedValue ? 'checked' : '' }}>
                                 {{ $label }} <span>{{ $value }}</span>
                             </label>
                         @endforeach

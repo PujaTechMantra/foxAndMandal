@@ -82,7 +82,7 @@
                         @endphp
                         @foreach($times as $value => $label)
                             <label>
-                                <input type="radio" name="departure_time" value="{{ $value }}"
+                                <input type="radio" name="departure_time" value="{{ $label . ' ' . $value }}"
                                     {{ old('departure_time') == $value ? 'checked' : '' }}>
                                 {{ $label }} <span>{{ $value }}</span>
                             </label>
@@ -103,7 +103,7 @@
                     <div class="radio-group">
                         @foreach($times as $value => $label)
                             <label>
-                                <input type="radio" name="return_time" value="{{ $value }}"
+                                <input type="radio" name="return_time" value="{{ $label . ' ' . $value }}"
                                     {{ old('return_time') == $value ? 'checked' : '' }}>
                                 {{ $label }} <span>{{ $value }}</span>
                             </label>

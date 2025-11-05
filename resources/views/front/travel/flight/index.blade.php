@@ -82,11 +82,13 @@
                                 '8 pm - 12 am' => 'Night',
                             ];
                         @endphp
+
                         @foreach($times as $value => $label)
-                            <label>
-                                <input type="radio" name="departure-time" value="{{ $value }}"
-                                    {{ old('departure-time') == $value ? 'checked' : '' }}>
-                                {{ $label }} <span>{{ $value }}</span>
+                            <label class="d-block mb-2">
+                                <input type="radio" name="departure-time" 
+                                    value="{{ $label . ' ' . $value }}"
+                                    {{ old('departure_time') == ($label . ' ' . $value) ? 'checked' : '' }}>
+                                <strong>{{ $label }}</strong> <span class="text-muted">({{ $value }})</span>
                             </label>
                         @endforeach
                     </div>
@@ -105,7 +107,7 @@
                     <div class="radio-group">
                         @foreach($times as $value => $label)
                             <label>
-                                <input type="radio" name="return-time" value="{{ $value }}"
+                                <input type="radio" name="return-time" value="{{ $label . ' ' . $value }}"
                                     {{ old('return-time') == $value ? 'checked' : '' }}>
                                 {{ $label }} <span>{{ $value }}</span>
                             </label>

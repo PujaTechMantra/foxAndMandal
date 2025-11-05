@@ -58,9 +58,7 @@
                             class="form-control" 
                             name="departure_time"
                             id="departure_time"
-                            value="{{ old('departure_time', $booking->pickup_time ?? now()->format('H:i')) }}"
-                           
-                        >
+                            value="{{ old('departure_time', $booking->pickup_time ?? now()->format('H:i')) }}">
                     </div>
                 </div>
             </div>

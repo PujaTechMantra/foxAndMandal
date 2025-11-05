@@ -236,17 +236,22 @@ $(document).ready(function () {
     let personList = @json($booking->traveller ?? []);
     let oldTravellerData = $('#travellerDataInput').val();
 
+    // Get preference type initially
+    let preference = $('input[name="preference"]:checked').val();
+
+    togglePreferenceFields(preference);
+
     if (oldTravellerData) {
         try {
             const parsed = JSON.parse(oldTravellerData);
             if (Array.isArray(parsed) && parsed.length > 0) {
                 personList = parsed;
-                renderPersons();
             }
         } catch (e) {
             console.error("Invalid traveller data JSON:", e);
         }
     }
+    renderPersons();
 
     // Trip type toggle
     $('#oneWayBtn').click(function () {
@@ -274,20 +279,28 @@ $(document).ready(function () {
         }
     });
 
-    // Autocomplete (same as add)
-    $(function () {
-        $('input[name="from"]').autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "{{ route('front.travel.train.search') }}",
-                    data: { term: request.term },
-                    success: function (data) { response(data); }
-                });
-            },
-            minLength: 1,
-        });
+    // Preference toggle (Train/Bus)
+    $('input[name="preference"]').on('change', function () {
+        preference = $(this).val();
+        togglePreferenceFields(preference);
+        renderPersons(); // Re-render travellers to match preference
+    });
 
-        $('input[name="to"]').autocomplete({
+    function togglePreferenceFields(pref) {
+        if (pref == 2) {
+            // Hide food/seat preference fields in modal for Bus
+            $('#personForm select[name="seatPref"]').closest('.mb-3').hide();
+            $('#personForm select[name="foodPref"]').closest('.mb-3').hide();
+        } else {
+            // Show them for Train
+            $('#personForm select[name="seatPref"]').closest('.mb-3').show();
+            $('#personForm select[name="foodPref"]').closest('.mb-3').show();
+        }
+    }
+
+    // Autocomplete (From / To)
+    $(function () {
+        $('input[name="from"], input[name="to"]').autocomplete({
             source: function (request, response) {
                 $.ajax({
                     url: "{{ route('front.travel.train.search') }}",
@@ -299,7 +312,7 @@ $(document).ready(function () {
         });
     });
 
-    // Render existing travellers
+    // Render travellers list
     function renderPersons() {
         const $wrapper = $('#personCardWrapper');
         const $body = $('#personCardBody');
@@ -312,17 +325,25 @@ $(document).ready(function () {
 
         $wrapper.show();
         personList.forEach((p, i) => {
+            let detailsHtml = '';
+
+            // Only show Seat/Food for Train
+            if (preference == 1) {
+                detailsHtml = `
+                    <p class="mb-0 text-muted small">
+                        <strong>Seat:</strong> ${p.seat_preference ?? 'N/A'} &nbsp;|&nbsp;
+                        <strong>Food:</strong> ${p.food_preference ?? 'N/A'}
+                    </p>`;
+            }
+
             const cardHtml = `
                 ${i > 0 ? '<hr class="my-3 border-gold">' : ''}
                 <div class="d-flex justify-content-between align-items-center flex-wrap py-2">
                     <div>
-                        <h6 class="mb-1 fw-semibold"> ${p.name ?? ''}</h6>
-                        <p class="mb-0 text-muted small">
-                            <strong>Seat:</strong> ${p.seat_preference ?? 'N/A'} &nbsp;|&nbsp;
-                            <strong>Food:</strong> ${p.food_preference ?? 'N/A'}
-                        </p>
+                        <h6 class="mb-1 fw-semibold">${p.name ?? ''}</h6>
+                        ${detailsHtml}
                     </div>
-                    <button class="btn btn-sm btn-outline-danger rounded-circle delete-person" data-id="${p.id ?? Date.now()}">
+                    <button class="btn btn-sm btn-outline-danger rounded-circle delete-person" data-index="${i}">
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>`;
@@ -330,16 +351,14 @@ $(document).ready(function () {
         });
     }
 
-
-    // Delete handler
+    // Delete traveller
     $(document).on('click', '.delete-person', function () {
         const index = $(this).data('index');
         personList.splice(index, 1);
         renderPersons();
     });
-    renderPersons();
 
-    // Add person
+    // Add person modal save
     $('#savePersonBtn').click(function () {
         $('#personForm .form-control, #personForm .form-select').removeClass('is-invalid');
         let title = $('#addPersonModal select[name="title"]').val();
@@ -347,25 +366,35 @@ $(document).ready(function () {
         let seat_preference = $('#addPersonModal select[name="seatPref"]').val();
         let food_preference = $('#addPersonModal select[name="foodPref"]').val();
 
-        let valid = name && seat_preference && food_preference;
+        // For Train preference = 1 → validate all fields
+        // For Bus preference = 2 → validate only name
+        let valid = name && (preference == 2 || (seat_preference && food_preference));
         if (!valid) {
             if (!name) $('#addPersonModal input[name="name"]').addClass('is-invalid');
-            if (!seat_preference) $('#addPersonModal select[name="seatPref"]').addClass('is-invalid');
-            if (!food_preference) $('#addPersonModal select[name="foodPref"]').addClass('is-invalid');
+            if (preference == 1) {
+                if (!seat_preference) $('#addPersonModal select[name="seatPref"]').addClass('is-invalid');
+                if (!food_preference) $('#addPersonModal select[name="foodPref"]').addClass('is-invalid');
+            }
             return;
         }
 
-        personList.push({ id: Date.now(), name : `${title} ${name}`, seat_preference, food_preference });
+        let person = { id: Date.now(), name: `${title} ${name}` };
+        if (preference == 1) {
+            person.seat_preference = seat_preference;
+            person.food_preference = food_preference;
+        }
+
+        personList.push(person);
         renderPersons();
         $('#addPersonModal').modal('hide');
         $('#personForm')[0].reset();
     });
 
-    // On submit — pass JSON
+    // Submit form with traveller data
     $('#trainBookingForm').on('submit', function () {
         $('#travellerDataInput').val(JSON.stringify(personList));
     });
-
 });
 </script>
 @endsection
+

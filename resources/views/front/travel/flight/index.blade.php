@@ -90,7 +90,7 @@
                             <label class="d-block mb-2">
                                 <input type="radio" name="departure-time" 
                                     value="{{ $label . ' ' . $value }}"
-                                    {{ old('departure_time') == ($label . ' ' . $value) ? 'checked' : '' }}>
+                                    {{ old('departure-time') == ($label . ' ' . $value) ? 'checked' : '' }}>
                                 <strong>{{ $label }}</strong> <span class="text-muted">({{ $value }})</span>
                             </label>
                         @endforeach
@@ -111,7 +111,7 @@
                         @foreach($times as $value => $label)
                             <label>
                                 <input type="radio" name="return-time" value="{{ $label . ' ' . $value }}"
-                                    {{ old('return-time') == $value ? 'checked' : '' }}>
+                                    {{ old('return-time') == ($label . ' ' . $value) ? 'checked' : '' }}>
                                 {{ $label }} <span>{{ $value }}</span>
                             </label>
                         @endforeach

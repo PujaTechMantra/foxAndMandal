@@ -212,9 +212,10 @@
           <div class="mb-3">
             <label class="form-label">Food Preference</label>
             <select class="form-select" name="foodPref">
-              <option value="">Select</option>
-              <option value="Veg">Veg</option>
-              <option value="Non-Veg">Non-Veg</option>
+                <option value="">Select</option>
+                <option value="Veg">Veg</option>
+                <option value="Non-Veg">Non-Veg</option>
+                <option value="CPML">CPML</option>
               <option value="None">None</option>
             </select>
             <div class="invalid-feedback">Please choose food preference.</div>
